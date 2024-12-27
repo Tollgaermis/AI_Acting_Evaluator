@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emphasis Detection</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+    <header>
+        <img src="/static/img/logo.png" alt="App Logo" style="width: 150px;">
+    </header>
+    <h1>Emphasis Detection</h1>
+
+    <!-- File Upload Option -->
+    <form id="uploadForm" enctype="multipart/form-data">
+        <label for="audio">Select an audio file:</label><br><br>
+        <input type="file" id="audio" name="audio" accept="audio/*"><br><br>
+        <label for="numWords">Number of emphasized words to detect:</label><br>
+        <input type="number" id="numWords" name="numWords" min="1" value="1"><br><br>
+        <button type="submit">Upload and Detect Emphasis</button>
+    </form>
+
+    <!-- Voice Recording Option -->
+    <h3>Or Record Your Voice:</h3>
+    <button id="recordButton">Start Recording</button>
+    <button id="stopButton" style="display: none;">Stop Recording</button>
+    <audio id="recordedAudio" controls style="display: none;"></audio>
+    <button id="detectEmphasisRecording" style="display: none;">Detect Emphasis in Recording</button>
+
+    <!-- Fullscreen Loading Spinner -->
+    <div id="spinner" style="display: none;">
+        <img src="/static/img/loading.gif" alt="Loading...">
+    </div>
+
+    <!-- Result Block -->
+    <div id="result"></div>
+
+     <!-- Back Button as an Image -->
+     <img src="/static/img/back.png" alt="Back to Home" class="back-button" onclick="window.location.href='/'">
+
+    <script src="/static/js/emphasis.js"></script>
+</body>
+</html>

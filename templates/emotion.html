@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Speech Emotion Classification</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+    <header>
+        <img src="/static/img/logo.png" alt="App Logo" style="width: 150px;">
+    </header>
+    <h1>Speech Emotion Classification</h1>
+
+    <form id="uploadForm" enctype="multipart/form-data">
+        <!-- File Upload Option -->
+        <label for="audio">Select an audio file:</label><br><br>
+        <input type="file" id="audio" name="audio" accept="audio/*"><br><br>
+        <button type="submit">Upload and Classify</button>
+    </form>
+
+    <!-- Voice Recording Option -->
+    <h3>Or Record Your Voice:</h3>
+    <button id="recordButton">Start Recording</button>
+    <button id="stopButton" style="display: none;">Stop Recording</button>
+    <audio id="recordedAudio" controls style="display: none;"></audio>
+    <button id="classifyRecording" style="display: none;">Classify Recording</button>
+
+    <!-- Fullscreen Loading Spinner -->
+    <div id="spinner">
+        <img src="/static/img/loading.gif" alt="Loading...">
+    </div>
+
+    <!-- Result Block -->
+    <div id="result"></div>
+
+     <!-- Back Button as an Image -->
+     <img src="/static/img/back.png" alt="Back to Home" class="back-button" onclick="window.location.href='/'">
+
+    <script src="/static/js/scripts.js"></script>
+</body>
+</html>
