@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Emphasis Detection</title>
-    <link rel="stylesheet" href="/static/css/styles.css">
-</head>
-<body>
-    <header>
+
+{% extends "base.html" %}
+
+{% block content %}
+
+    
+    <!-- <body> -->
+    <!-- <header>
         <img src="/static/img/logo.png" alt="App Logo" style="width: 150px;">
-    </header>
+    </header> -->
     <h1>Emphasis Detection</h1>
 
     <!-- File Upload Option -->
@@ -36,9 +36,12 @@
     <!-- Result Block -->
     <div id="result"></div>
 
-     <!-- Back Button as an Image -->
-     <img src="/static/img/back.png" alt="Back to Home" class="back-button" onclick="window.location.href='/index'">
+    <!-- Back Button as an Image -->
+    <img src="/static/img/back.png" alt="Back to Home" class="back-button" onclick="window.location.href='/index'">
 
     <script src="/static/js/emphasis.js"></script>
-</body>
+    </body>
+
+{% endblock %}
+
 </html>

@@ -1,0 +1,25 @@
+<!-- base.html -->
+<head>
+    {% block head %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emphasis Detection</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+    {% endblock %}
+</head>
+<header>
+    <img src="/static/img/logo.png" alt="App Logo" style="width: 150px;">
+</header>
+<nav>
+    <ul>
+        <li><a href="{{ url_for('home') }}">Login</a></li>
+        <li><a href="{{ url_for('main_page') }}"></a>Main Page</li>
+        <li><a href="{{ url_for('emotion_detection_page') }}">Emotion Detection</a></li>
+        <li><a href="{{ url_for('sliding_scale_page') }}">Sliding Scale</a></li>
+        <li><a href="{{ url_for('emphasis_page') }}">Emphasis Detection</a></li>
+        <li><a href="{{ url_for('logout') }}">Logout</a></li>
+    </ul>
+</nav>
+</body>
+    <div id="content">{% block content %}{% endblock %}</div>
+</body>
