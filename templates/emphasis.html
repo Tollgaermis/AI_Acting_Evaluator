@@ -40,7 +40,40 @@
     <img src="/static/img/back.png" alt="Back to Home" class="back-button" onclick="window.location.href='/index'">
 
     <script src="/static/js/emphasis.js"></script>
+
+    <div id="pastResults">
+        <h2>Past Emphasis Detections</h2>
+        <div style="overflow-y: scroll; max-height: 300px;">
+            <table border="1" style="width: 100%; text-align: left;">
+                <thead>
+                    <tr>
+                        <th>Date and Time</th>
+                        <th>Audio</th>
+                        <th>Emphasized Words</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for result in results %}
+                    <tr>
+                        <td>{{ result.created_at }}</td>
+                        <td>
+                            <audio controls>
+                                <source src="{{ url_for('static', filename='uploads/' + result.user_id | string + '_' + result.audio_file_name) }}" type="audio/wav">
+                                Your browser does not support the audio element.
+                            </audio>
+                        </td>
+                        <td>{{ result.emphasized_words.replace(',', ', ') }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+
     </body>
+
+
 
 {% endblock %}
 

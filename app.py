@@ -27,6 +27,10 @@ CORS(app)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///db.sqlite"
 # Enter a secret key
 app.config["SECRET_KEY"] = "ENTER YOUR SECRET KEY"
+
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16 MB, adjust as needed
+
+
 # Initialize flask-sqlalchemy extension
 db = SQLAlchemy()
  
@@ -44,6 +48,17 @@ class Users(UserMixin, db.Model):
                          nullable=False)
     password = db.Column(db.String(250),
                          nullable=False)
+
+class EmphasisResult(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    audio_file_name = db.Column(db.String(250), nullable=False)
+    emphasized_words = db.Column(db.String(500), nullable=False)  # Store as comma-separated values or JSON
+    created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
+    num_words = db.Column(db.Integer, nullable=False)
+
+    user = db.relationship('Users', backref=db.backref('emphasis_results', lazy=True))
+
  
  
 # Initialize app with extension
@@ -166,8 +181,11 @@ def predict_emotion():
 
 
 @app.route('/emphasis-detection')
+@login_required
 def emphasis_page():
-    return render_template('emphasis.html')
+    # Query past emphasis detection results for the user
+    results = EmphasisResult.query.filter_by(user_id=current_user.id).order_by(EmphasisResult.created_at.desc()).all()
+    return render_template('emphasis.html', results=results)
 
 @app.route('/detect-emphasis', methods=['POST'])
 @login_required
@@ -176,16 +194,45 @@ def detect_emphasis_api():
         return jsonify({"error": "No audio file uploaded"}), 400
 
     # Save the uploaded audio file
+    upload_dir = os.path.join('static', 'uploads')
+    os.makedirs(upload_dir, exist_ok=True)  # Ensure the uploads directory exists
+
+    print(request.files)
+
     audio_file = request.files['audio']
-    n_words = int(request.form.get('numWords', 1))
-    audio_path = secure_filename(f"temp_{audio_file.filename}")
-    audio_file.save(audio_path)
+    audio_filename = secure_filename(f"{current_user.id}_{audio_file.filename}")
+    audio_path = os.path.join(upload_dir, audio_filename)
+    print(f"Audio filename: {audio_filename}")
+    print(f"Audio path: {audio_path}")
+
+    if audio_file:
+        print(f"File size: {len(audio_file.read())} bytes")
+        audio_file.seek(0)  # Reset the file pointer after checking size
+    else:
+        print("No file content")
 
     try:
+        audio_file.save(audio_path)  # Save the uploaded file
+        print(f"File saved to {audio_path}")
+    except Exception as e:
+        print(f"Error saving file: {e}")
+        
+    try:
         # Transcribe the audio and detect emphasized words
+        num_words = int(request.form.get('numWords', 1))
         words_with_timestamps = transcribe_audio(audio_path)
-        emphasized_words = detect_emphasis(audio_path, words_with_timestamps, n_words)
-        os.remove(audio_path)  # Clean up temporary file
+        emphasized_words = detect_emphasis(audio_path, words_with_timestamps, num_words)
+        # Save result to database
+        result = EmphasisResult(
+            user_id=current_user.id,
+            audio_file_name=audio_file.filename,
+            emphasized_words=",".join(emphasized_words),
+            num_words=num_words
+        )
+        db.session.add(result)
+        db.session.commit()
+
+        #os.remove(audio_path)  # Clean up temporary file
 
         return jsonify({"emphasized_words": emphasized_words})
     except Exception as e:
