@@ -1,15 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Speech Analysis App</title>
-    <link rel="stylesheet" href="/static/css/styles.css">
-</head>
-<body>
-    <header>
-        <img src="/static/img/logo.png" alt="App Logo" style="width: 150px;">
-    </header>
+
+{% extends "base.html" %}
+
+{% block content %}
     <h1>Speech Analysis Application</h1>
     <div class="button-container">
         <button id="emotionDetectionBtn">Emotion Detection</button>
@@ -31,5 +25,5 @@
             window.location.href = "/emphasis-detection"; // Navigate to the Emphasis Detection page
         });
     </script>
-</body>
+{% endblock %}
 </html>
