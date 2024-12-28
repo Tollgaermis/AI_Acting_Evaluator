@@ -36,7 +36,7 @@
     <div id="result"></div>
 
      <!-- Back Button as an Image -->
-     <img src="/static/img/back.png" alt="Back to Home" class="back-button" onclick="window.location.href='/'">
+     <img src="/static/img/back.png" alt="Back to Home" class="back-button" onclick="window.location.href='/index'">
 
     <script>
         const recordButton = document.getElementById("recordButton");
@@ -91,6 +91,12 @@
                     method: "POST",
                     body: formData,
                 });
+
+                // Check if the response is a redirect (in case the user is not logged in)
+                if (response.redirected) {
+                    window.location.href = response.url; // Redirect the user to the login page
+                    return;
+                }
 
                 if (response.ok) {
                     const data = await response.json();

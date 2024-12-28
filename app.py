@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify, render_template, url_for, redirect, flash
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
-from flask_login import LoginManager, UserMixin, login_user, logout_user
+from flask_login import LoginManager, UserMixin, login_user, logout_user, current_user, login_required
 import numpy as np
 from pydub import AudioSegment
 import os
@@ -34,6 +34,8 @@ db = SQLAlchemy()
 # to be able to log in and out users
 login_manager = LoginManager()
 login_manager.init_app(app)
+
+login_manager.login_view = "login"
 
 # Create user model
 class Users(UserMixin, db.Model):
@@ -78,13 +80,13 @@ def convert_to_wav(input_path, output_path):
         raise ValueError(f"Error converting audio to WAV format: {e}")
 
 
-@app.route("/user")
+@app.route("/")
 def home():
-	# Render home.html on "/user" route
+	# Render home.html on "/" route
 	return render_template("home.html")
 
 
-@app.route('/')
+@app.route('/index')
 def main_page():
     return render_template('index.html')  # Main page with 3 buttons
 
@@ -99,6 +101,7 @@ def sliding_scale_page():
 
 
 @app.route("/classify-sliding-scale-result", methods=["POST"])
+@login_required
 def sliding_scale_result():
     if "audio" not in request.files:
         return jsonify({"error": "No audio file uploaded"}), 400
@@ -118,6 +121,7 @@ def sliding_scale_result():
 
 
 @app.route('/predict', methods=['POST'])
+@login_required
 def predict_emotion():
     # Check if the request contains an audio file
     if 'audio' not in request.files:
@@ -166,6 +170,7 @@ def emphasis_page():
     return render_template('emphasis.html')
 
 @app.route('/detect-emphasis', methods=['POST'])
+@login_required
 def detect_emphasis_api():
     if 'audio' not in request.files:
         return jsonify({"error": "No audio file uploaded"}), 400
@@ -234,6 +239,7 @@ def login():
     return render_template("login.html")
 
 @app.route("/logout")
+@login_required
 def logout():
     logout_user()
     return redirect(url_for("home"))

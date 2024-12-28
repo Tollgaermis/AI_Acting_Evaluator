@@ -25,6 +25,12 @@ document.getElementById('uploadForm').addEventListener('submit', async (event) =
             body: formData,
         });
 
+        // Check if the response is a redirect (in case the user is not logged in)
+        if (response.redirected) {
+            window.location.href = response.url; // Redirect the user to the login page
+            return;
+        }
+
         if (response.ok) {
             const data = await response.json();
             resultDiv.innerHTML = `
@@ -103,6 +109,12 @@ detectEmphasisRecordingButton.addEventListener('click', async () => {
             method: 'POST',
             body: formData,
         });
+
+        // Check if the response is a redirect (in case the user is not logged in)
+        if (response.redirected) {
+            window.location.href = response.url; // Redirect the user to the login page
+            return;
+        }
 
         if (response.ok) {
             const data = await response.json();
