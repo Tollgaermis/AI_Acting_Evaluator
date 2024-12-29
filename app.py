@@ -119,6 +119,7 @@ def main_page():
 
 
 @app.route('/emotion-detection')
+@login_required
 def emotion_detection_page():
     results = EmotionResult.query.filter_by(user_id=current_user.id).order_by(EmotionResult.created_at.desc()).all()
     return render_template('emotion.html', results=results)
