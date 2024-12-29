@@ -59,6 +59,18 @@ class EmphasisResult(db.Model):
 
     user = db.relationship('Users', backref=db.backref('emphasis_results', lazy=True))
 
+class EmotionResult(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    audio_file_name = db.Column(db.String(250), nullable=False)
+    emotion = db.Column(db.String(500), nullable=False)  # Store as comma-separated values or JSON
+    pleasure = db.Column(db.Float)
+    arousal = db.Column(db.Float)
+    dominance = db.Column(db.Float)
+    created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
+
+    user = db.relationship('Users', backref=db.backref('emotion_results', lazy=True))
+
  
  
 # Initialize app with extension
@@ -108,7 +120,9 @@ def main_page():
 
 @app.route('/emotion-detection')
 def emotion_detection_page():
-    return render_template('emotion.html')  # Emotion detection page
+    results = EmotionResult.query.filter_by(user_id=current_user.id).order_by(EmotionResult.created_at.desc()).all()
+    return render_template('emotion.html', results=results)
+    #return render_template('emotion.html')  # Emotion detection page
 
 @app.route("/classify-sliding-scale")
 def sliding_scale_page():
@@ -143,11 +157,30 @@ def predict_emotion():
         return jsonify({"error": "No audio file uploaded"}), 400
 
     # Save the uploaded audio file
-    audio_file = request.files['audio']
-    audio_path = f"temp_{audio_file.filename}"
-    audio_file.save(audio_path)
+    upload_dir = os.path.join('static', 'uploads')
+    os.makedirs(upload_dir, exist_ok=True)  # Ensure the uploads directory exists
 
+    print(request.files)
+
+    audio_file = request.files['audio']
+    audio_filename = secure_filename(f"{current_user.id}_{audio_file.filename}")
+    audio_path = os.path.join(upload_dir, audio_filename)
+    print(f"Audio filename: {audio_filename}")
+    print(f"Audio path: {audio_path}")
+
+    if audio_file:
+        print(f"File size: {len(audio_file.read())} bytes")
+        audio_file.seek(0)  # Reset the file pointer after checking size
+    else:
+        print("No file content")
     # Load and preprocess audio file
+
+    try:
+        audio_file.save(audio_path)  # Save the uploaded file
+        print(f"File saved to {audio_path}")
+    except Exception as e:
+        print(f"Error saving file: {e}")
+
     try:
         audio_input, _ = librosa.load(audio_path, sr=16000)
     except Exception as e:
@@ -170,6 +203,19 @@ def predict_emotion():
     arousal = float(arousal)
     dominance = float(dominance)
     emotion = classify_emotion([pleasure, arousal, dominance])
+
+    # Save result to database
+    result = EmotionResult(
+        user_id=current_user.id,
+        audio_file_name=audio_file.filename,
+        emotion=str(emotion),
+        pleasure = pleasure,
+        arousal = arousal,
+        dominance = dominance
+
+    )
+    db.session.add(result)
+    db.session.commit()
 
     # Return the results as JSON
     return jsonify({
