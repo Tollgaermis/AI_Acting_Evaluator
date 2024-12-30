@@ -1,25 +1,28 @@
-<!-- base.html -->
+<!DOCTYPE html>
+<html lang="en">
 <head>
     {% block head %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Emphasis Detection</title>
+    <title>{% block title %}Speech Analysis App{% endblock %}</title>
     <link rel="stylesheet" href="/static/css/styles.css">
     {% endblock %}
 </head>
-<header>
-    <img src="/static/img/logo.png" alt="App Logo" style="width: 150px;">
-</header>
-<nav>
-    <ul>
-        <li><a href="{{ url_for('home') }}">Login</a></li>
-        <li><a href="{{ url_for('main_page') }}">Main Page</a></li>
-        <li><a href="{{ url_for('emotion_detection_page') }}">Emotion Detection</a></li>
-        <li><a href="{{ url_for('sliding_scale_page') }}">Sliding Scale</a></li>
-        <li><a href="{{ url_for('emphasis_page') }}">Emphasis Detection</a></li>
-        <li><a href="{{ url_for('logout') }}">Logout</a></li>
-    </ul>
-</nav>
-</body>
+<body>
+    <header>
+        <img src="/static/img/logo.png" alt="App Logo" style="width: 50px;">
+
+        <nav class="navbar">
+            <ul class="nav-list">
+                <li><a href="{{ url_for('login') }}">Login</a></li>
+                <li><a href="{{ url_for('main_page') }}">Main Page</a></li>
+                {% if current_user.is_authenticated %}
+                <li><a href="/logout">Logout</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+
+    </header>
     <div id="content">{% block content %}{% endblock %}</div>
 </body>
+</html>

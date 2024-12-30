@@ -1,16 +1,12 @@
 /* static/css/styles.css */
 
 body {
+    margin: 0;
     font-family: Arial, sans-serif;
     background-color: #f4f4f4;
-    margin: 0;
-    padding: 20px;
-    text-align: center;
+    color: #333;
 }
 
-h1 {
-    color: #ed0000;
-}
 
 form {
     margin: 20px auto;
@@ -104,3 +100,63 @@ button:hover {
     font-size: 16px; /* Adjust the font size */
 }
 
+
+/* General body styles */
+
+
+/* Header and navbar styles */
+header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px;
+    background-color: #090d28; /* Dark background for the header */
+    color: white;
+}
+
+/* Navbar styles */
+.navbar {
+    display: flex;
+}
+
+.nav-list {
+    list-style: none;
+    display: flex;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-list li {
+    margin: 0 10px;
+}
+
+.nav-list a {
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+    padding: 10px 15px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.nav-list a:hover {
+    background-color: #555; /* Slightly lighter color on hover */
+    color: #ddd; /* Slightly lighter text color */
+}
+
+/* Responsive layout for mobile */
+@media (max-width: 768px) {
+    header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .nav-list {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .nav-list li {
+        margin: 10px 0;
+    }
+}
