@@ -113,10 +113,6 @@ def home():
 	return render_template("home.html")
 
 
-@app.route('/index')
-def main_page():
-    return render_template('index.html')  # Main page with 3 buttons
-
 
 @app.route('/emotion-detection')
 @login_required

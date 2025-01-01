@@ -1,13 +1,31 @@
-/* static/css/styles.css */
-
-body {
+/* General body styles */
+html, body {
+    height: 100%;
     margin: 0;
     font-family: Arial, sans-serif;
     background-color: #f4f4f4;
     color: #333;
 }
 
+#content {
+    min-height: calc(100vh - 134px); /* Adjust based on the footer height */
+    display: flex;
+    flex-direction: column;
+}
 
+/* H1 styles */
+h1 {
+    text-align: left; /* Center the text horizontally */
+    font-size: 2.5rem; /* Adjust font size for a modern look */
+    font-weight: bold; /* Make the text bold */
+    color: #333; /* Dark gray color for text */
+    margin-top: 20px; /* Add spacing above the heading */
+    margin-left: 20px;
+    margin-bottom: 20px; /* Add spacing below the heading */
+}
+
+
+/* Form styles */
 form {
     margin: 20px auto;
     padding: 20px;
@@ -22,12 +40,46 @@ input[type="file"] {
     margin: 10px 0;
 }
 
+/* Section styles for description */
+.description-section {
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    max-width: 800px;
+    text-align: left;
+    color: #333;
+}
+
+.description-section h2 {
+    font-size: 1.8rem;
+    margin-top: 20px;
+    color: #090d28; /* Match the header and footer color scheme */
+}
+
+.description-section p {
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+.exercise-card {
+    margin: 20px 0;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-left: 5px solid #007bff; /* Accent border */
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Style buttons */
 .button-container {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 20px; /* Spacing between buttons */
-    margin-top: 50px;
+    margin-top: 30px;
 }
 
 button {
@@ -38,7 +90,8 @@ button {
     cursor: pointer;
     border-radius: 5px;
     font-size: 18px;
-    width: 50%; /* Adjust width for larger buttons */
+    width: 50%;
+    transition: background-color 0.3s ease;
 }
 
 button:hover {
@@ -46,7 +99,7 @@ button:hover {
 }
 
 
-/* Fullscreen overlay spinner */
+/* Spinner styles */
 #spinner {
     display: none;
     position: fixed; /* Fixed position to cover the whole page */
@@ -64,7 +117,7 @@ button:hover {
     width: 250px; /* Adjust spinner size */
 }
 
-
+/* Result block styles */
 #result {
     display: none; 
     margin-top: 20px;
@@ -92,17 +145,36 @@ button:hover {
     cursor: pointer; /* Change cursor to pointer for clickability */
 }
 
+footer {
+    text-align: center;
+    margin-top: auto; /* Push the footer to the bottom */
+    padding: 10px 0;
+    background-color: #090d28; /* Dark background for the footer */
+    color: white;
+    font-size: 14px;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+    
+}
 
+footer a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+footer a:hover {
+    text-decoration: underline;
+}
+
+
+/* Classify recording button styles */
 #classifyRecording {
     display: block; /* Ensures it's treated as a block for centering */
     margin: 20px auto; /* Centers the button horizontally */
     padding: 10px 20px; /* Add padding for a better look */
     font-size: 16px; /* Adjust the font size */
 }
-
-
-/* General body styles */
-
 
 /* Header and navbar styles */
 header {
@@ -111,6 +183,23 @@ header {
     justify-content: space-between;
     padding: 10px 20px;
     background-color: #090d28; /* Dark background for the header */
+    color: white;
+}
+
+/* Logo container for logo and app name */
+.logo-container {
+    display: flex;
+    align-items: center;
+}
+
+.logo {
+    width: 50px; /* Logo size */
+    margin-right: 10px;
+}
+
+.app-name {
+    font-size: 1.5rem;
+    font-weight: bold;
     color: white;
 }
 

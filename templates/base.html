@@ -10,19 +10,23 @@
 </head>
 <body>
     <header>
-        <img src="/static/img/logo.png" alt="App Logo" style="width: 50px;">
+        <div class="logo-container">
+            <img src="/static/img/logo.png" alt="App Logo" class="logo">
+            <span class="app-name">AI Voice Acting Evaluator</span>
+        </div>
 
         <nav class="navbar">
             <ul class="nav-list">
+                <li><a href="{{ url_for('home') }}">Main Page</a></li>
                 <li><a href="{{ url_for('login') }}">Login</a></li>
-                <li><a href="{{ url_for('main_page') }}">Main Page</a></li>
+                <li><a href="{{ url_for('register') }}">Sign Up</a></li>
                 {% if current_user.is_authenticated %}
                 <li><a href="/logout">Logout</a></li>
                 {% endif %}
             </ul>
         </nav>
-
     </header>
     <div id="content">{% block content %}{% endblock %}</div>
+    {% block footer %}{% endblock %}
 </body>
 </html>
