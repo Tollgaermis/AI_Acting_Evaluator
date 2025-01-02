@@ -1,6 +1,7 @@
 import numpy as np
 import torch
 import librosa
+import re
 import os
 from scipy.io.wavfile import write
 from transformers import Wav2Vec2Processor, Wav2Vec2PreTrainedModel, Wav2Vec2Model
@@ -103,17 +104,36 @@ def transcribe_audio_with_timestamps(audio_path):
     result = stt_model.transcribe(audio_path, word_timestamps=True)
     return result["text"], result["segments"]
 
-# Split audio based on the word "But"
-def split_audio_on_word(audio_path, output_dir="output", word=" But"):
+def split_audio_on_word(audio_path, output_dir="output", word=None):
+    """
+    Split the audio file into two segments based on the first occurrence of a specified shifting word.
+    Args:
+        audio_path (str): Path to the recorded audio file.
+        output_dir (str): Directory to save split audio segments.
+        word (str): The shifting word (from the random sentence).
+    Returns:
+        dict: Contains emotions for both segments, transcription, and split metadata.
+    """
+    if not word:
+        raise ValueError("A shifting word must be provided for splitting.")
+
+    
     try:
+        # Transcribe the audio and get timestamps
         transcription, word_timestamps = transcribe_audio_with_timestamps(audio_path)
         print(f"Transcription: {transcription}")
 
-        # Find the timestamp for the specified word
+        # Clean the transcription (remove punctuation, lowercase)
+        cleaned_transcription = re.sub(r'[^\w\s]', '', transcription).lower()
+        
+        # Find the timestamp for the specified shifting word
         split_word_time = None
         for segment in word_timestamps:
             for word_entry in segment["words"]:
-                if word_entry["word"] == word:
+                # Clean each word entry (remove punctuation, lowercase)
+                cleaned_word = re.sub(r'[^\w\s]', '', word_entry["word"]).lower()
+
+                if cleaned_word == word:  # Case-insensitive match after cleaning
                     split_word_time = word_entry["start"]
                     break
             if split_word_time:
@@ -122,12 +142,12 @@ def split_audio_on_word(audio_path, output_dir="output", word=" But"):
         if split_word_time is None:
             raise ValueError(f"The word '{word}' was not found in the transcription.")
 
-        # Split audio
+        # Split the audio into two segments based on the timestamp
         audio, sample_rate = librosa.load(audio_path, sr=16000)
         segment1 = audio[: int(split_word_time * sample_rate)]
         segment2 = audio[int(split_word_time * sample_rate):]
 
-        # Save the segments
+        # Save the audio segments
         os.makedirs(output_dir, exist_ok=True)
         write(f"{output_dir}/segment1.wav", sample_rate, segment1)
         write(f"{output_dir}/segment2.wav", sample_rate, segment2)
@@ -136,6 +156,7 @@ def split_audio_on_word(audio_path, output_dir="output", word=" But"):
         emotion1 = detect_emotion(segment1, sample_rate)
         emotion2 = detect_emotion(segment2, sample_rate)
 
+        # Return the results as a dictionary
         return {
             "Segment 1 Emotion": emotion1,
             "Segment 2 Emotion": emotion2,

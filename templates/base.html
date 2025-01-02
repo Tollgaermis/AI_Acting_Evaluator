@@ -11,8 +11,10 @@
 <body>
     <header>
         <div class="logo-container">
-            <img src="/static/img/logo.png" alt="App Logo" class="logo">
-            <span class="app-name">AI Voice Acting Evaluator</span>
+             <a href="{{ url_for('home') }}">
+                <img src="/static/img/logo.png" alt="App Logo" class="logo">
+            </a>
+            <a href="{{ url_for('home') }}" class="app-name">AI Voice Acting Evaluator</a>
         </div>
 
         <nav class="navbar">

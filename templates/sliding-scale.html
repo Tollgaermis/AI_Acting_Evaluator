@@ -1,40 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
-    
-
 {% extends "base.html" %}
 
 {% block content %}
-    <header>
-        <h1>Sliding Scale Emotion Analysis</h1>
-    </header>
+    <div class="modern-container">
+        <header>
+            <h1>Sliding Scale Emotion Analysis</h1>
+        </header>
 
-    <!-- Prompt Section -->
-    <div id="prompt">
-        <p style="color: red;">Today is such a beautiful day! The sun is shining, and everything feels full of hope and joy.</p>
-        <p style="color: blue;">But how dare they ruin everything with their careless actions? This is completely unacceptable, and I won’t tolerate it anymore!</p>
-        <p><strong>Shifting Word:</strong> "But"</p>
-        <p><strong>Objective:</strong> Act <span style="color: red;">Happy</span> in the first part and <span style="color: blue;">Angry</span> in the second part.</p>
+        <!-- Prompt Section -->
+        <div class="prompt-section">
+            <p class="sentence-red">{{ selected_sentence["sentence1"] }}</p>
+            <p class="sentence-blue">{{ selected_sentence["sentence2"] }}</p>
+            <p><strong>Shifting Word:</strong> "{{ selected_sentence["shifting_word"] }}"</p>
+            <p><strong>Objective:</strong> Act <span class="highlight-red">{{ emotion1 }}</span> in the first part and <span class="highlight-blue">{{ emotion2 }}</span> in the second part.</p>
+        </div>
+
+        <!-- Recording Section -->
+        <div class="recording-section">
+            <h2>Record Your Voice</h2>
+            <button id="recordButton" class="modern-button">Start Recording</button>
+            <button id="stopButton" class="modern-button" style="display: none;">Stop Recording</button>
+            <audio id="recordedAudio" controls style="display: none;" class="modern-audio"></audio>
+            <button id="classifyRecording" class="modern-button" style="display: none;">Classify Recording</button>
+        </div>
+
+        <!-- Spinner -->
+        <div id="spinner" class="spinner">
+            <img src="/static/img/loading.gif" alt="Loading...">
+        </div>
+
+        <!-- Results Section -->
+        <div id="result" class="modern-result-block">
+            <h2>Classification Results</h2>
+            <p id="resultContent">Your results will appear here after classification.</p>
+        </div>
     </div>
 
-    <!-- Recording Section -->
-    <div id="recording-section">
-        <button id="recordButton">Start Recording</button>
-        <button id="stopButton" style="display: none;">Stop Recording</button>
-        <audio id="recordedAudio" controls style="display: none;"></audio>
-        <button id="classifyRecording" style="display: none;">Classify Recording</button>
-    </div>
-
-    <!-- Spinner -->
-    <div id="spinner">
-        <img src="/static/img/loading.gif" alt="Loading...">
-    </div>
-
-    <!-- Results Section -->
-    <div id="result"></div>
-
-     <!-- Back Button as an Image -->
-     <img src="/static/img/back.png" alt="Back to Home" class="back-button" onclick="window.location.href='/'">
 
     <script>
         const recordButton = document.getElementById("recordButton");

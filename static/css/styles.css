@@ -7,21 +7,120 @@ html, body {
     color: #333;
 }
 
+/* Modern Container */
+.modern-container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* H1 styles */
+h1 {
+    text-align: center;
+    font-size: 2rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+/* Prompt Section */
+.prompt-section {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    text-align: center;
+    color: #333;
+}
+
+.sentence-red {
+    color: #dc3545; /* Red text for first sentence */
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.sentence-blue {
+    color: #007bff; /* Blue text for second sentence */
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.highlight-red {
+    color: #dc3545; /* Highlighted red text */
+    font-weight: bold;
+}
+
+.highlight-blue {
+    color: #007bff; /* Highlighted blue text */
+    font-weight: bold;
+}
+
+/* Recording Section */
+.recording-section {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.modern-button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    margin-top: 10px;
+}
+
+.modern-button:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+}
+
+.modern-audio {
+    width: 100%;
+    margin-top: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #f1f1f1;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+
+/* Results Section */
+.modern-result-block {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.modern-result-block h2 {
+    font-size: 1.5rem;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.modern-result-block p {
+    font-size: 1rem;
+    color: #555;
+}
+
 #content {
     min-height: calc(100vh - 134px); /* Adjust based on the footer height */
     display: flex;
     flex-direction: column;
 }
 
-/* H1 styles */
-h1 {
-    text-align: center; /* Center the text horizontally */
-    font-size: 1.5rem; /* Adjust font size for a modern look */
-    font-weight: bold; /* Make the text bold */
-    color: #090d28; /* Dark gray color for text */
-    margin-top: 40px; /* Add spacing above the heading */
-     /* Add spacing below the heading */
-}
 
 
 /* Form styles */
@@ -148,15 +247,7 @@ button:hover {
     display: block; /* Ensures it's treated as a block for centering */
 }
 
-/* Back button image */
-.back-button {
-    position: absolute; /* Absolute positioning to place it on the page */
-    top: 10px; /* Distance from the top */
-    left: 10px; /* Distance from the left */
-    width: 40px; /* Width of the back button image */
-    height: 40px; /* Height of the back button image */
-    cursor: pointer; /* Change cursor to pointer for clickability */
-}
+
 
 footer {
     text-align: center;
@@ -211,6 +302,7 @@ header {
 }
 
 .app-name {
+    text-decoration: none;
     font-size: 1.5rem;
     font-weight: bold;
     color: white;

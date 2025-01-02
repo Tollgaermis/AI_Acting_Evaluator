@@ -1,8 +1,9 @@
-from flask import Flask, request, jsonify, render_template, url_for, redirect, flash
+from flask import Flask, request, jsonify, render_template, url_for, redirect, flash, session
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, logout_user, current_user, login_required
 import numpy as np
+import random
 from pydub import AudioSegment
 import os
 import torch
@@ -30,6 +31,16 @@ app.config["SECRET_KEY"] = "ENTER YOUR SECRET KEY"
 
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16 MB, adjust as needed
 
+emotion_pad_values = {
+    "Happy": [2.77, 1.21, 1.42],
+    "Boring": [-0.53, -1.25, -0.84],
+    "Sad": [-0.89, 0.17, -0.70],
+    "Fear": [-0.93, 1.30, -0.64],
+    "Anxiety": [-0.95, 0.32, -0.63],
+    "Disgust": [-1.80, 0.40, 0.67],
+    "Anger": [-2.08, 1.00, 1.12],
+    "Neutral": [0.00, 0.00, 0.00]
+}
 
 # Initialize flask-sqlalchemy extension
 db = SQLAlchemy()
@@ -72,7 +83,28 @@ class EmotionResult(db.Model):
     user = db.relationship('Users', backref=db.backref('emotion_results', lazy=True))
 
  
- 
+def load_sentences(filepath="sentences.txt"):
+    """
+    Load sentences from a text file and return them as a list of dictionaries.
+    Each line in the file should be formatted as:
+    sentence1|sentence2|shifting_word
+    """
+    sentence_data = []
+    try:
+        with open(filepath, "r") as file:
+            for line in file:
+                parts = line.strip().split("|")
+                if len(parts) == 3:
+                    sentence_data.append({
+                        "sentence1": parts[0],
+                        "sentence2": parts[1],
+                        "shifting_word": parts[2]
+                    })
+    except FileNotFoundError:
+        print(f"Error: {filepath} not found.")
+    return sentence_data
+
+
 # Initialize app with extension
 db.init_app(app)
 # Create database within app context
@@ -113,6 +145,10 @@ def home():
 	return render_template("home.html")
 
 
+@app.route('/index')
+def main_page():
+    return render_template('index.html')  # Main page with 3 buttons
+
 
 @app.route('/emotion-detection')
 @login_required
@@ -122,9 +158,30 @@ def emotion_detection_page():
     #return render_template('emotion.html')  # Emotion detection page
 
 @app.route("/classify-sliding-scale")
+@login_required
 def sliding_scale_page():
-    return render_template("sliding-scale.html")  # Sliding scale page
+    # Load sentences from the file
+    sentences = load_sentences("sentences.txt")
+    if not sentences:
+        return jsonify({"error": "No sentences available"}), 500
 
+    # Select a random sentence and emotions
+    selected_sentence = random.choice(sentences)
+    emotions = list(emotion_pad_values.keys())
+    emotion1, emotion2 = random.sample(emotions, 2)
+
+    # Store the selected sentence and emotions in session
+    session["selected_sentence"] = selected_sentence
+    session["emotion1"] = emotion1
+    session["emotion2"] = emotion2
+
+    # Pass the selected sentence and emotions to the template
+    return render_template(
+        "sliding-scale.html",
+        selected_sentence=selected_sentence,
+        emotion1=emotion1,
+        emotion2=emotion2
+    )
 
 @app.route("/classify-sliding-scale-result", methods=["POST"])
 @login_required
@@ -132,18 +189,27 @@ def sliding_scale_result():
     if "audio" not in request.files:
         return jsonify({"error": "No audio file uploaded"}), 400
 
-    # Save uploaded audio
+    # Retrieve the selected sentence and shifting word from session
+    selected_sentence = session.get("selected_sentence")
+    if not selected_sentence:
+        return jsonify({"error": "No selected sentence found in session"}), 500
+
+    shifting_word = selected_sentence["shifting_word"]
+    shifting_word = ' ' + shifting_word.lower()
+
+    # Save the uploaded audio file
     audio_file = request.files["audio"]
     audio_path = f"temp_{audio_file.filename}"
     audio_file.save(audio_path)
 
     try:
-        # Use " But" explicitly
-        result = split_audio_on_word(audio_path, word=" But")
+        # Pass the shifting word to split_audio_on_word
+        result = split_audio_on_word(audio_path, word=shifting_word)
         return jsonify(result)
     except Exception as e:
         print(f"Error: {str(e)}")
         return jsonify({"error": str(e)}), 500
+
 
 
 @app.route('/predict', methods=['POST'])
