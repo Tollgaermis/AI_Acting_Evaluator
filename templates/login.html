@@ -3,29 +3,27 @@
 
 {% extends "base.html" %}
 
-
 {% block content %}
-	{% with messages = get_flashed_messages(with_categories=true) %}
-	{% if messages %}
-		<ul>
-		{% for category, message in messages %}
-			<li class="{{ category }}">{{ message }}</li>
-		{% endfor %}
-		</ul>
-	{% endif %}
-	{% endwith %}
+    <!-- Toast Messages -->
+    <div id="toast-container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="toast {{ category }}">{{ message }}</div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+    </div>
 
-	<title>Login</title>
-	
-	<h1>Login to your account</h1>
-	<form action="#" method="post">
-	<label for="username">Username:</label>
-	<input type="text" name="username" />
-	<label for="password">Password:</label>
-	<input type="password" name="password" />
-	<button type="submit">Submit</button>
-	</form>
-	
-	<a href="/register">Create account</a></li>
+    <h1>Login To Your Account</h1>
+    <form action="#" method="post" class="auth-form">
+        <label for="username">Username:</label>
+        <input type="text" name="username" placeholder="Enter your username" required />
+
+        <label for="password">Password:</label>
+        <input type="password" name="password" placeholder="Enter your password" required />
+
+        <button type="submit">Login</button>
+    </form>
 {% endblock %}
 </html>

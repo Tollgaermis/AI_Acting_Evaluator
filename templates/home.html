@@ -4,7 +4,6 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>Speech Analysis Application</h1>
 
     <!-- Description Section -->
     <section class="description-section">
@@ -12,17 +11,17 @@
         <p>Our application offers a suite of tools designed to refine your vocal performance, emotional expression, and emphasis control. Here's an overview of the key exercises you can explore:</p>
         
         <div class="exercise-card">
-            <h2>Emotion Detection</h2>
+            <h2><a href="/emotion-detection" class="exercise-title-link">Emotion Detection</a></h2>
             <p>Understanding and conveying emotions authentically is crucial in voice acting. Our Emotion Detection module analyzes your vocal recordings to provide insights into the emotional tones present in your performance. This feedback helps you identify areas for improvement and ensures your delivery resonates with the intended emotional impact.</p>
         </div>
 
         <div class="exercise-card">
-            <h2>Sliding Scale Variations</h2>
+            <h2><a href="/classify-sliding-scale" class="exercise-title-link">Sliding Scale Variations</a></h2>
             <p>Mastering the ability to modulate emotions across a spectrum is essential for dynamic performances. The Sliding Scale Variations exercise guides you in expressing emotions at varying intensities—from subtle nuances to heightened expressions. This practice enhances your versatility and adaptability in different acting scenarios.</p>
         </div>
 
         <div class="exercise-card">
-            <h2>Emphasis Detection</h2>
+            <h2><a href="/emphasis-detection" class="exercise-title-link">Emphasis Detection</a></h2>
             <p>Placing emphasis on specific words or phrases can significantly alter the meaning and impact of a line. Our Emphasis Detection tool evaluates your recordings to determine how effectively you stress key parts of your script. By refining this skill, you can add depth and clarity to your performances, ensuring your message is conveyed as intended.</p>
         </div>
 
@@ -30,37 +29,6 @@
 
         <p>Explore these exercises today and take the next step in your voice acting development!</p>
     </section>
-
-    <!-- Button Section -->
-    <div class="button-container">
-        <button id="emotionDetectionBtn">Emotion Detection</button>
-        <button id="slidingScaleBtn">Sliding Scale Variations</button>
-        <button id="emphasisBtn">Emphasis</button>
-    </div>
-
-    <script>
-        // Add navigation functionality for buttons
-        document.getElementById("emotionDetectionBtn").addEventListener("click", () => {
-            window.location.href = "/emotion-detection";
-        });
-
-        document.getElementById("slidingScaleBtn").addEventListener("click", () => {
-            window.location.href = "/classify-sliding-scale";
-        });
-
-        document.getElementById("emphasisBtn").addEventListener("click", () => {
-            window.location.href = "/emphasis-detection";
-        });
-    </script>
 {% endblock %}
 
-{% block footer %}
-    <footer>
-        {% if current_user.is_authenticated %}
-        <p>You are logged in. <a href="/logout">Logout</a></p>
-        {% else %}
-        <p>You are not logged in. <a href="/login">Login</a> or <a href="/register">Create an account</a>.</p>
-        {% endif %}
-    </footer>
-{% endblock %}
 </html>

@@ -18,8 +18,10 @@
         <nav class="navbar">
             <ul class="nav-list">
                 <li><a href="{{ url_for('home') }}">Main Page</a></li>
+                {% if not current_user.is_authenticated %}
                 <li><a href="{{ url_for('login') }}">Login</a></li>
                 <li><a href="{{ url_for('register') }}">Sign Up</a></li>
+                {% endif %}
                 {% if current_user.is_authenticated %}
                 <li><a href="/logout">Logout</a></li>
                 {% endif %}
@@ -27,6 +29,14 @@
         </nav>
     </header>
     <div id="content">{% block content %}{% endblock %}</div>
-    {% block footer %}{% endblock %}
+    <footer>
+        {% if current_user.is_authenticated %}
+        <p>You are logged in. <a href="/logout">Logout</a></p>
+        {% else %}
+        <p>You are not logged in. <a href="{{ url_for('login') }}">Login</a> or <a href="{{ url_for('register') }}">Sign Up</a>.</p>
+        {% endif %}
+    </footer>
+    
+    <script src="/static/js/toast.js"></script>
 </body>
 </html>
