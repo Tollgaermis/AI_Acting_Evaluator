@@ -4,68 +4,77 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>Speech Emotion Classification</h1>
+    <div class="modern-container">
+        <header>
+            <h1>Speech Emotion Classification</h1>
+        </header>
 
-    <form id="uploadForm" enctype="multipart/form-data">
-        <!-- File Upload Option -->
-        <label for="audio">Select an audio file:</label><br><br>
-        <input type="file" id="audio" name="audio" accept="audio/*"><br><br>
-        <button type="submit">Upload and Classify</button>
-    </form>
+        <!-- File Upload Form -->
+        <form id="uploadForm" enctype="multipart/form-data" class="modern-form">
+            <label for="audio" class="form-section-title">Select an Audio File:</label>
+            <input type="file" id="audio" name="audio" accept="audio/*" class="form-input">
+            <button type="submit" class="modern-button">Upload and Classify</button>
+        </form>
 
-    <!-- Voice Recording Option -->
-    <h3>Or Record Your Voice:</h3>
-    <button id="recordButton">Start Recording</button>
-    <button id="stopButton" style="display: none;">Stop Recording</button>
-    <audio id="recordedAudio" controls style="display: none;"></audio>
-    <button id="classifyRecording" style="display: none;">Classify Recording</button>
+        <hr class="form-divider">
 
-    <!-- Fullscreen Loading Spinner -->
-    <div id="spinner">
-        <img src="/static/img/loading.gif" alt="Loading...">
-    </div>
+        <!-- Voice Recording Section -->
+        <div class="recording-section">
+            <h2 class="form-section-title">Or Record Your Voice:</h2>
+            <button id="recordButton" class="modern-button">Start Recording</button>
+            <button id="stopButton" class="modern-button" style="display: none;">Stop Recording</button>
+            <audio id="recordedAudio" controls style="display: none;" class="modern-audio"></audio>
+            <button id="classifyRecording" class="modern-button" style="display: none;">Classify Recording</button>
+        </div>
 
-    <!-- Result Block -->
-    <div id="result"></div>
+        <!-- Fullscreen Loading Spinner -->
+        <div id="spinner" class="spinner">
+            <img src="/static/img/loading.gif" alt="Loading...">
+        </div>
 
-    
+        <!-- Results Section -->
+        <div id="result" class="modern-result-block">
+            <h2>Classification Results</h2>
+            <p id="resultContent">Your results will appear here.</p>
+        </div>
 
-    <script src="/static/js/scripts.js"></script>
-
-    <div id="pastResults">
-        <h2>Past Emotion Detections</h2>
-        <div style="overflow-y: scroll; max-height: 300px;">
-            <table border="1" style="width: 100%; text-align: left;">
-                <thead>
-                    <tr>
-                        <th>Date and Time</th>
-                        <th>Audio</th>
-                        <th>Emotion</th>
-                        <th>Pleasure</th>
-                        <th>Arousal</th>
-                        <th>Dominance</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for result in results %}
-                    <tr>
-                        <td>{{ result.created_at }}</td>
-                        <td>
-                            <audio controls>
-                                <source src="{{ url_for('static', filename='uploads/' + result.user_id | string + '_' + result.audio_file_name) }}" type="audio/wav">
-                                Your browser does not support the audio element.
-                            </audio>
-                        </td>
-                        <td>{{ result.emotion }}</td>
-                        <td>{{ result.pleasure | round(3) }}</td>
-                        <td>{{ result.arousal | round(3) }}</td>
-                        <td>{{ result.dominance | round(3) }}</td>
-
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+        <!-- Past Results Section -->
+        <div id="pastResults" class="past-results-section">
+            <h2>Past Emotion Detections</h2>
+            <div class="scrollable-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date and Time</th>
+                            <th>Audio</th>
+                            <th>Emotion</th>
+                            <th>Pleasure</th>
+                            <th>Arousal</th>
+                            <th>Dominance</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for result in results %}
+                        <tr>
+                            <td>{{ result.created_at }}</td>
+                            <td>
+                                <audio controls>
+                                    <source src="{{ url_for('static', filename='uploads/' + result.user_id | string + '_' + result.audio_file_name) }}" type="audio/wav">
+                                    Your browser does not support the audio element.
+                                </audio>
+                            </td>
+                            <td>{{ result.emotion }}</td>
+                            <td>{{ result.pleasure | round(3) }}</td>
+                            <td>{{ result.arousal | round(3) }}</td>
+                            <td>{{ result.dominance | round(3) }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
+
+    <script src="/static/js/scripts.js"></script>
 {% endblock %}
 </html>

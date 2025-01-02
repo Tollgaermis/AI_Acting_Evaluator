@@ -4,76 +4,75 @@
 {% extends "base.html" %}
 
 {% block content %}
+    <div class="modern-container">
+        <header>
+            <h1>Emphasis Detection</h1>
+        </header>
 
-    
-    <!-- <body> -->
-    <!-- <header>
-        <img src="/static/img/logo.png" alt="App Logo" style="width: 150px;">
-    </header> -->
-    <h1>Emphasis Detection</h1>
+        <!-- File Upload Form -->
+        <form id="uploadForm" enctype="multipart/form-data" class="modern-form">
+            <label for="audio" class="form-section-title">Select an Audio File:</label>
+            <input type="file" id="audio" name="audio" accept="audio/*" class="form-input">
 
-    <!-- File Upload Option -->
-    <form id="uploadForm" enctype="multipart/form-data">
-        <label for="audio">Select an audio file:</label><br><br>
-        <input type="file" id="audio" name="audio" accept="audio/*"><br><br>
-        <label for="numWords">Number of emphasized words to detect:</label><br>
-        <input type="number" id="numWords" name="numWords" min="1" value="1"><br><br>
-        <button type="submit">Upload and Detect Emphasis</button>
-    </form>
+            <label for="numWords" class="form-section-title">Number of Emphasized Words to Detect:</label>
+            <input type="number" id="numWords" name="numWords" min="1" value="1" class="form-input">
 
-    <!-- Voice Recording Option -->
-    <h3>Or Record Your Voice:</h3>
-    <button id="recordButton">Start Recording</button>
-    <button id="stopButton" style="display: none;">Stop Recording</button>
-    <audio id="recordedAudio" controls style="display: none;"></audio>
-    <button id="detectEmphasisRecording" style="display: none;">Detect Emphasis in Recording</button>
+            <button type="submit" class="modern-button">Upload and Detect Emphasis</button>
+        </form>
 
-    <!-- Fullscreen Loading Spinner -->
-    <div id="spinner" style="display: none;">
-        <img src="/static/img/loading.gif" alt="Loading...">
-    </div>
+        <hr class="form-divider">
 
-    <!-- Result Block -->
-    <div id="result"></div>
+        <!-- Voice Recording Section -->
+        <div class="recording-section">
+            <h2 class="form-section-title">Or Record Your Voice:</h2>
+            <button id="recordButton" class="modern-button">Start Recording</button>
+            <button id="stopButton" class="modern-button" style="display: none;">Stop Recording</button>
+            <audio id="recordedAudio" controls style="display: none;" class="modern-audio"></audio>
+            <button id="detectEmphasisRecording" class="modern-button" style="display: none;">Detect Emphasis in Recording</button>
+        </div>
 
-    
+        <!-- Fullscreen Loading Spinner -->
+        <div id="spinner" class="spinner">
+            <img src="/static/img/loading.gif" alt="Loading...">
+        </div>
 
-    <script src="/static/js/emphasis.js"></script>
+        <!-- Results Section -->
+        <div id="result" class="modern-result-block">
+            <h2>Detection Results</h2>
+            <p id="resultContent">Your results will appear here.</p>
+        </div>
 
-    <div id="pastResults">
-        <h2>Past Emphasis Detections</h2>
-        <div style="overflow-y: scroll; max-height: 300px;">
-            <table border="1" style="width: 100%; text-align: left;">
-                <thead>
-                    <tr>
-                        <th>Date and Time</th>
-                        <th>Audio</th>
-                        <th>Emphasized Words</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for result in results %}
-                    <tr>
-                        <td>{{ result.created_at }}</td>
-                        <td>
-                            <audio controls>
-                                <source src="{{ url_for('static', filename='uploads/' + result.user_id | string + '_' + result.audio_file_name) }}" type="audio/wav">
-                                Your browser does not support the audio element.
-                            </audio>
-                        </td>
-                        <td>{{ result.emphasized_words.replace(',', ', ') }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+        <!-- Past Results Section -->
+        <div id="pastResults" class="past-results-section">
+            <h2>Past Emphasis Detections</h2>
+            <div class="scrollable-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date and Time</th>
+                            <th>Audio</th>
+                            <th>Emphasized Words</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for result in results %}
+                        <tr>
+                            <td>{{ result.created_at }}</td>
+                            <td>
+                                <audio controls>
+                                    <source src="{{ url_for('static', filename='uploads/' + result.user_id | string + '_' + result.audio_file_name) }}" type="audio/wav">
+                                    Your browser does not support the audio element.
+                                </audio>
+                            </td>
+                            <td>{{ result.emphasized_words.replace(',', ', ') }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
-    
 
-    </body>
-
-
-
+    <script src="/static/js/emphasis.js"></script>
 {% endblock %}
-
 </html>
