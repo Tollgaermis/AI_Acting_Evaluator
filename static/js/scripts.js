@@ -1,7 +1,7 @@
-document.getElementById('uploadForm').addEventListener('submit', async (event) => {
+// File Upload: Handle audio file submission
+document.getElementById('uploadButton').addEventListener('click', async (event) => {
     event.preventDefault();
 
-    const formData = new FormData();
     const audioFile = document.getElementById('audio').files[0];
     const resultDiv = document.getElementById('result');
     const spinner = document.getElementById('spinner');
@@ -11,11 +11,12 @@ document.getElementById('uploadForm').addEventListener('submit', async (event) =
         return;
     }
 
+    const formData = new FormData();
     formData.append('audio', audioFile);
 
     // Show loading spinner and hide result
-    spinner.style.display = "flex"; // Display spinner overlay
-    resultDiv.style.display = ""; // Hide result block while loading
+    spinner.style.display = "flex";
+    resultDiv.style.display = ""; // Hide result while loading
 
     try {
         const response = await fetch('/predict', {
@@ -23,13 +24,13 @@ document.getElementById('uploadForm').addEventListener('submit', async (event) =
             body: formData,
         });
 
-        // Check if the response is a redirect (in case the user is not logged in)
+        // Redirect to login if necessary
         if (response.redirected) {
-            window.location.href = response.url; // Redirect the user to the login page
+            window.location.href = response.url;
             return;
         }
 
-         if (response.ok) {
+        if (response.ok) {
             const data = await response.json();
             resultDiv.innerHTML = `
                 <h3>Predicted Emotion: <span>${data.emotion}</span></h3>
@@ -44,13 +45,11 @@ document.getElementById('uploadForm').addEventListener('submit', async (event) =
     } catch (err) {
         resultDiv.innerHTML = `<p>Unexpected error: ${err.message}</p>`;
     } finally {
-        // Hide loading spinner
         spinner.style.display = "none";
     }
 });
 
-
-// Get references to UI elements
+// Voice Recording Buttons
 const recordButton = document.getElementById('recordButton');
 const stopButton = document.getElementById('stopButton');
 const classifyRecordingButton = document.getElementById('classifyRecording');
@@ -62,52 +61,48 @@ const spinner = document.getElementById('spinner');
 let mediaRecorder;
 let audioChunks = [];
 
-// Start recording
+// Start Recording
 recordButton.addEventListener('click', async () => {
     try {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
         mediaRecorder = new MediaRecorder(stream);
 
         mediaRecorder.ondataavailable = (event) => {
-            console.log("Data available:", event.data);
             audioChunks.push(event.data);
         };
 
         mediaRecorder.onstop = () => {
-            console.log("Recording stopped. Processing audio...");
             const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
             const audioUrl = URL.createObjectURL(audioBlob);
             recordedAudio.src = audioUrl;
             recordedAudio.style.display = 'block';
-            classifyRecordingButton.style.display = 'block';
-            console.log("Audio Blob:", audioBlob);
+            classifyRecordingButton.style.display = 'inline';
         };
 
         mediaRecorder.start();
-        console.log("Recording started...");
         recordButton.style.display = 'none';
         stopButton.style.display = 'inline';
-        audioChunks = []; // Reset chunks for new recording
+        audioChunks = []; // Reset for new recording
     } catch (error) {
         alert('Error accessing microphone: ' + error.message);
     }
 });
 
-// Stop recording
+// Stop Recording
 stopButton.addEventListener('click', () => {
     mediaRecorder.stop();
     stopButton.style.display = 'none';
     recordButton.style.display = 'inline';
 });
 
-// Classify the recorded audio
+// Classify Recorded Audio
 classifyRecordingButton.addEventListener('click', async () => {
     const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
     const formData = new FormData();
     formData.append('audio', audioBlob, 'recorded_audio.wav');
 
-    spinner.style.display = 'flex'; // Show spinner
-    resultDiv.style.display = 'none'; // Hide previous results
+    spinner.style.display = 'flex';
+    resultDiv.style.display = 'none';
 
     try {
         const response = await fetch('/predict', {
@@ -115,9 +110,8 @@ classifyRecordingButton.addEventListener('click', async () => {
             body: formData,
         });
 
-        // Check if the response is a redirect (in case the user is not logged in)
         if (response.redirected) {
-            window.location.href = response.url; // Redirect the user to the login page
+            window.location.href = response.url;
             return;
         }
 
@@ -139,6 +133,6 @@ classifyRecordingButton.addEventListener('click', async () => {
         resultDiv.innerHTML = `<p>Unexpected error: ${err.message}</p>`;
         resultDiv.style.display = 'block';
     } finally {
-        spinner.style.display = 'none'; // Hide spinner
+        spinner.style.display = 'none';
     }
 });
