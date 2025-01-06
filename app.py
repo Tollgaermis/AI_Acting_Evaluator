@@ -82,6 +82,18 @@ class EmotionResult(db.Model):
 
     user = db.relationship('Users', backref=db.backref('emotion_results', lazy=True))
 
+class SlidingScaleResult(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    audio_file_name = db.Column(db.String(250), nullable=False)
+    segment1_emotion = db.Column(db.String(100))
+    segment2_emotion = db.Column(db.String(100))
+    transcription = db.Column(db.Text)
+    created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
+
+    user = db.relationship('Users', backref=db.backref('sliding_scale_results', lazy=True))
+
+
  
 def load_sentences(filepath="sentences.txt"):
     """
@@ -170,18 +182,24 @@ def sliding_scale_page():
     emotions = list(emotion_pad_values.keys())
     emotion1, emotion2 = random.sample(emotions, 2)
 
-    # Store the selected sentence and emotions in session
+    # Store selected sentence and emotions in session
     session["selected_sentence"] = selected_sentence
     session["emotion1"] = emotion1
     session["emotion2"] = emotion2
 
-    # Pass the selected sentence and emotions to the template
+    # Query past results for the current user
+    sliding_scale_results = SlidingScaleResult.query.filter_by(
+        user_id=current_user.id
+    ).order_by(SlidingScaleResult.created_at.desc()).all()
+
     return render_template(
         "sliding-scale.html",
         selected_sentence=selected_sentence,
         emotion1=emotion1,
-        emotion2=emotion2
+        emotion2=emotion2,
+        sliding_scale_results=sliding_scale_results
     )
+
 
 @app.route("/classify-sliding-scale-result", methods=["POST"])
 @login_required
@@ -189,26 +207,49 @@ def sliding_scale_result():
     if "audio" not in request.files:
         return jsonify({"error": "No audio file uploaded"}), 400
 
-    # Retrieve the selected sentence and shifting word from session
+    # Retrieve selected sentence and shifting word
     selected_sentence = session.get("selected_sentence")
     if not selected_sentence:
         return jsonify({"error": "No selected sentence found in session"}), 500
 
-    shifting_word = selected_sentence["shifting_word"]
-    shifting_word = ' ' + shifting_word.lower()
+    shifting_word = ' ' + selected_sentence["shifting_word"].lower()
 
-    # Save the uploaded audio file
+    # Save uploaded audio
     audio_file = request.files["audio"]
-    audio_path = f"temp_{audio_file.filename}"
+    audio_filename = secure_filename(f"{current_user.id}_{audio_file.filename}")
+    audio_path = os.path.join("static", "uploads", audio_filename)
+    os.makedirs(os.path.dirname(audio_path), exist_ok=True)
     audio_file.save(audio_path)
 
     try:
-        # Pass the shifting word to split_audio_on_word
+        # Process the audio for emotions
         result = split_audio_on_word(audio_path, word=shifting_word)
-        return jsonify(result)
+        segment1_emotion = result["Segment 1 Emotion"]["Emotion"]
+        segment2_emotion = result["Segment 2 Emotion"]["Emotion"]
+        transcription = result["Transcription"]
+
+        # Save result to database
+        sliding_scale_result = SlidingScaleResult(
+            user_id=current_user.id,
+            audio_file_name=audio_filename,
+            segment1_emotion=segment1_emotion,
+            segment2_emotion=segment2_emotion,
+            transcription=transcription
+        )
+        db.session.add(sliding_scale_result)
+        db.session.commit()
+
+        # Return JSON response
+        return jsonify({
+            "Segment 1 Emotion": segment1_emotion,
+            "Segment 2 Emotion": segment2_emotion,
+            "Transcription": transcription
+        })
+
     except Exception as e:
         print(f"Error: {str(e)}")
         return jsonify({"error": str(e)}), 500
+
 
 
 
