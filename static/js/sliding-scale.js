@@ -66,6 +66,11 @@ classifyRecordingButton.addEventListener("click", async () => {
 
         if (response.ok) {
             const data = await response.json();
+            console.log("Received data:", data);
+    
+            // Check if the data contains the expected details
+            console.log("Segment 1 Details:", data["Segment 1 Emotion"]?.Details);
+            console.log("Segment 2 Details:", data["Segment 2 Emotion"]?.Details);
             resultDiv.innerHTML = `
                 <h3>Emotion Analysis Results</h3>
                 <p><strong>Segment 1 (${data["Segment 1 Emotion"].Emotion}):</strong> ${data["Segment 1 Emotion"].Details}</p>
