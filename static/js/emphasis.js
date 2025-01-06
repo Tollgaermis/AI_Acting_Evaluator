@@ -1,9 +1,9 @@
-document.getElementById('uploadForm').addEventListener('submit', async (event) => {
+// File Upload: Handle audio file submission
+document.getElementById('uploadButton').addEventListener('click', async (event) => {
     event.preventDefault();
 
-    const formData = new FormData();
     const audioFile = document.getElementById('audio').files[0];
-    const numWords = document.getElementById('numWords').value;
+    const numWords = document.getElementById('numWords') ? document.getElementById('numWords').value : 1;
     const resultDiv = document.getElementById('result');
     const spinner = document.getElementById('spinner');
 
@@ -12,6 +12,7 @@ document.getElementById('uploadForm').addEventListener('submit', async (event) =
         return;
     }
 
+    const formData = new FormData();
     formData.append('audio', audioFile);
     formData.append('numWords', numWords);
 
@@ -25,9 +26,9 @@ document.getElementById('uploadForm').addEventListener('submit', async (event) =
             body: formData,
         });
 
-        // Check if the response is a redirect (in case the user is not logged in)
+        // Redirect to login if necessary
         if (response.redirected) {
-            window.location.href = response.url; // Redirect the user to the login page
+            window.location.href = response.url;
             return;
         }
 
@@ -48,7 +49,7 @@ document.getElementById('uploadForm').addEventListener('submit', async (event) =
     }
 });
 
-// Recording and emphasis detection functionality
+// Voice Recording Buttons
 const recordButton = document.getElementById('recordButton');
 const stopButton = document.getElementById('stopButton');
 const detectEmphasisRecordingButton = document.getElementById('detectEmphasisRecording');
@@ -56,10 +57,11 @@ const recordedAudio = document.getElementById('recordedAudio');
 const resultDiv = document.getElementById('result');
 const spinner = document.getElementById('spinner');
 
+// Initialize variables for recording
 let mediaRecorder;
 let audioChunks = [];
 
-// Start recording
+// Start Recording
 recordButton.addEventListener('click', async () => {
     try {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -74,7 +76,7 @@ recordButton.addEventListener('click', async () => {
             const audioUrl = URL.createObjectURL(audioBlob);
             recordedAudio.src = audioUrl;
             recordedAudio.style.display = 'block';
-            detectEmphasisRecordingButton.style.display = 'block';
+            detectEmphasisRecordingButton.style.display = 'inline';
         };
 
         mediaRecorder.start();
@@ -86,18 +88,18 @@ recordButton.addEventListener('click', async () => {
     }
 });
 
-// Stop recording
+// Stop Recording
 stopButton.addEventListener('click', () => {
     mediaRecorder.stop();
     stopButton.style.display = 'none';
     recordButton.style.display = 'inline';
 });
 
-// Detect emphasis in the recording
+// Detect Emphasis in Recorded Audio
 detectEmphasisRecordingButton.addEventListener('click', async () => {
     const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
     const formData = new FormData();
-    const numWords = document.getElementById('numWords').value;
+    const numWords = document.getElementById('numWords') ? document.getElementById('numWords').value : 1;
     formData.append('audio', audioBlob, 'recorded_audio.wav');
     formData.append('numWords', numWords);
 
@@ -110,9 +112,8 @@ detectEmphasisRecordingButton.addEventListener('click', async () => {
             body: formData,
         });
 
-        // Check if the response is a redirect (in case the user is not logged in)
         if (response.redirected) {
-            window.location.href = response.url; // Redirect the user to the login page
+            window.location.href = response.url;
             return;
         }
 
