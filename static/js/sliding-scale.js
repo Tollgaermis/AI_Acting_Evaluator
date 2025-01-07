@@ -66,15 +66,18 @@ classifyRecordingButton.addEventListener("click", async () => {
 
         if (response.ok) {
             const data = await response.json();
-            console.log("Received data:", data);
-    
-            // Check if the data contains the expected details
-            console.log("Segment 1 Details:", data["Segment 1 Emotion"]?.Details);
-            console.log("Segment 2 Details:", data["Segment 2 Emotion"]?.Details);
             resultDiv.innerHTML = `
                 <h3>Emotion Analysis Results</h3>
-                <p><strong>Segment 1 (${data["Segment 1 Emotion"].Emotion}):</strong> ${data["Segment 1 Emotion"].Details}</p>
-                <p><strong>Segment 2 (${data["Segment 2 Emotion"].Emotion}):</strong> ${data["Segment 2 Emotion"].Details}</p>
+                <p>
+                    <strong>Segment 1 (${data["Target Emotion 1"]}):</strong>
+                    ${data["Segment 1 Emotion"]} 
+                    (${data["Target Emotion 1"] === data["Segment 1 Emotion"] ? "Success" : "Fail"})
+                </p>
+                <p>
+                    <strong>Segment 2 (${data["Target Emotion 2"]}):</strong>
+                    ${data["Segment 2 Emotion"]}
+                    (${data["Target Emotion 2"] === data["Segment 2 Emotion"] ? "Success" : "Fail"})
+                </p>
                 <p><strong>Full Transcription:</strong> ${data["Transcription"]}</p>
             `;
         } else {

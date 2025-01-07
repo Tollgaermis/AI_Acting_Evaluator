@@ -1,31 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
+
 {% extends "base.html" %}
 
 {% block content %}
-    <div class="modern-container">
-        <header>
+
+    <!-- Forms Section as Exercise Cards -->
+    <section class="description-section">
+        <header class="minimal-header">
             <h1>Sliding Scale Emotion Analysis</h1>
         </header>
 
         <!-- Prompt Section -->
-        <div class="prompt-section">
+        <div class="exercise-card">
+            <h2 class="header">Prompt Details</h2>
             <p class="sentence-red">{{ selected_sentence["sentence1"] }}</p>
             <p class="sentence-blue">{{ selected_sentence["sentence2"] }}</p>
             <p><strong>Shifting Word:</strong> "{{ selected_sentence["shifting_word"] }}"</p>
             <p><strong>Objective:</strong> Act <span class="highlight-red">{{ emotion1 }}</span> in the first part and <span class="highlight-blue">{{ emotion2 }}</span> in the second part.</p>
         </div>
 
-        <!-- Recording Section -->
-        <div class="recording-section">
-            <h2>Record Your Voice</h2>
-            <button id="recordButton" class="modern-button">Start Recording</button>
-            <button id="stopButton" class="modern-button" style="display: none;">Stop Recording</button>
-            <audio id="recordedAudio" controls style="display: none;" class="modern-audio"></audio>
+        <!-- Voice Recording Exercise -->
+        <div class="exercise-card">
+            <h2 class="header">Record Your Voice</h2>
+            <div class="button-row">
+                <button id="recordButton" class="modern-button">Start Recording</button>
+                <button id="stopButton" class="modern-button" style="display: none;">Stop Recording</button>
+                <audio id="recordedAudio" controls style="display: none;" class="modern-audio"></audio>
+            </div>
             <button id="classifyRecording" class="modern-button" style="display: none;">Classify Recording</button>
         </div>
 
-        <!-- Spinner -->
+        <!-- Fullscreen Loading Spinner -->
         <div id="spinner" class="spinner">
             <img src="/static/img/loading.gif" alt="Loading...">
         </div>
@@ -35,87 +41,42 @@
             <h2>Classification Results</h2>
             <p id="resultContent">Your results will appear here after classification.</p>
         </div>
-    </div>
 
+        <!-- Past Results Section -->
+        <div id="pastResults" class="past-results-section">
+            <h2>Past Sliding Scale Analyses</h2>
+            <div class="scrollable-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date and Time</th>
+                            <th>Audio</th>
+                            <th>Emotion 1</th>
+                            <th>Emotion 2</th>
+                            <th>Transition Accuracy</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for result in results %}
+                        <tr>
+                            <td>{{ result.created_at }}</td>
+                            <td>
+                                <audio controls>
+                                    <source src="{{ url_for('static', filename='uploads/' + result.user_id | string + '_' + result.audio_file_name) }}" type="audio/wav">
+                                    Your browser does not support the audio element.
+                                </audio>
+                            </td>
+                            <td>{{ result.emotion1 }}</td>
+                            <td>{{ result.emotion2 }}</td>
+                            <td>{{ result.transition_accuracy }}%</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
 
-    <script>
-        const recordButton = document.getElementById("recordButton");
-        const stopButton = document.getElementById("stopButton");
-        const classifyRecordingButton = document.getElementById("classifyRecording");
-        const recordedAudio = document.getElementById("recordedAudio");
-        const resultDiv = document.getElementById("result");
-        const spinner = document.getElementById("spinner");
-
-        let mediaRecorder;
-        let audioChunks = [];
-
-        // Start Recording
-        recordButton.addEventListener("click", async () => {
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            mediaRecorder = new MediaRecorder(stream);
-
-            mediaRecorder.ondataavailable = (event) => {
-                audioChunks.push(event.data);
-            };
-
-            mediaRecorder.onstop = () => {
-                const audioBlob = new Blob(audioChunks, { type: "audio/wav" });
-                const audioUrl = URL.createObjectURL(audioBlob);
-                recordedAudio.src = audioUrl;
-                recordedAudio.style.display = "block";
-                classifyRecordingButton.style.display = "block";
-            };
-
-            mediaRecorder.start();
-            recordButton.style.display = "none";
-            stopButton.style.display = "inline";
-        });
-
-        // Stop Recording
-        stopButton.addEventListener("click", () => {
-            mediaRecorder.stop();
-            stopButton.style.display = "none";
-            recordButton.style.display = "inline";
-        });
-
-        // Classify Recording
-        classifyRecordingButton.addEventListener("click", async () => {
-            const audioBlob = new Blob(audioChunks, { type: "audio/wav" });
-            const formData = new FormData();
-            formData.append("audio", audioBlob, "recorded_audio.wav");
-
-            spinner.style.display = "flex";
-
-            try {
-                const response = await fetch("/classify-sliding-scale-result", {
-                    method: "POST",
-                    body: formData,
-                });
-
-                // Check if the response is a redirect (in case the user is not logged in)
-                if (response.redirected) {
-                    window.location.href = response.url; // Redirect the user to the login page
-                    return;
-                }
-
-                if (response.ok) {
-                    const data = await response.json();
-                    resultDiv.innerHTML = `
-                        <h3>Emotion Analysis Results</h3>
-                        <p><strong>Segment 1 (Happy):</strong> ${data["Segment 1 Emotion"].Emotion}</p>
-                        <p><strong>Segment 2 (Angry):</strong> ${data["Segment 2 Emotion"].Emotion}</p>
-                        <p><strong>Full Transcription:</strong> ${data["Transcription"]}</p>
-                    `;
-                } else {
-                    const error = await response.json();
-                    resultDiv.innerHTML = `<p>Error: ${error.error}</p>`;
-                }
-            } catch (error) {
-                resultDiv.innerHTML = `<p>Unexpected error: ${error.message}</p>`;
-            } finally {
-                spinner.style.display = "none";
-            }
-        });
-    </script>
+    <script src="/static/js/sliding-scale.js"></script>
 {% endblock %}
 </html>

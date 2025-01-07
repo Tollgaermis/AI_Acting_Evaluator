@@ -202,6 +202,8 @@ def sliding_scale_result():
 
     # Retrieve selected sentence and shifting word
     selected_sentence = session.get("selected_sentence")
+    random_emotion1 = session.get("emotion1")
+    random_emotion2 = session.get("emotion2")
     if not selected_sentence:
         return jsonify({"error": "No selected sentence found in session"}), 500
 
@@ -236,6 +238,8 @@ def sliding_scale_result():
         return jsonify({
             "Segment 1 Emotion": segment1_emotion,
             "Segment 2 Emotion": segment2_emotion,
+            "Target Emotion 1": random_emotion1,
+            "Target Emotion 2": random_emotion2,
             "Transcription": transcription
         })
 
