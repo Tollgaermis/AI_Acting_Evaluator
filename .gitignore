@@ -1,1 +1,33 @@
 instance/db.sqlite
+__pycache__/
+*.pyc
+*.pyo
+*.sqlite
+static/uploads/
+
+# Ignore Python bytecode
+*.pyc
+__pycache__/
+
+# Ignore local database
+instance/db.sqlite
+
+# Ignore uploaded/generated files
+static/uploads/
+
+# Ignore environment files
+.env
+venv/
+
+# Ignore logs
+*.log
+
+# Ignore editor/IDE settings
+.vscode/
+.idea/
+
+# Ignore build artifacts
+build/
+dist/
+*.egg-info/
+
