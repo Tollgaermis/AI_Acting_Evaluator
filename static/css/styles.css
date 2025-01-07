@@ -535,6 +535,38 @@ header {
     display: block;
 }
 
+.play-section {
+    text-align: center;
+    margin: 20px;
+}
+
+.play-text {
+    font-size: 1.2rem;
+    margin: 20px 0;
+    color: #333;
+}
+
+.next-button {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.next-button:hover {
+    background-color: #0056b3;
+}
+
+.next-button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+
 
 
 /* Responsive layout for mobile */

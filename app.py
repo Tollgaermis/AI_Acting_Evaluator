@@ -156,12 +156,6 @@ def home():
 	# Render home.html on "/" route
 	return render_template("home.html")
 
-
-@app.route('/index')
-def main_page():
-    return render_template('index.html')  # Main page with 3 buttons
-
-
 @app.route('/emotion-detection')
 @login_required
 def emotion_detection_page():
@@ -199,7 +193,6 @@ def sliding_scale_page():
         emotion2=emotion2,
         sliding_scale_results=sliding_scale_results
     )
-
 
 @app.route("/classify-sliding-scale-result", methods=["POST"])
 @login_required
@@ -249,9 +242,6 @@ def sliding_scale_result():
     except Exception as e:
         print(f"Error: {str(e)}")
         return jsonify({"error": str(e)}), 500
-
-
-
 
 @app.route('/predict', methods=['POST'])
 @login_required
@@ -328,7 +318,6 @@ def predict_emotion():
         "dominance": round(dominance, 3),
         "emotion": emotion
     })
-
 
 @app.route('/emphasis-detection')
 @login_required
