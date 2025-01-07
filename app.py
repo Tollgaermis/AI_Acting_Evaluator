@@ -186,12 +186,14 @@ def sliding_scale_page():
         user_id=current_user.id
     ).order_by(SlidingScaleResult.created_at.desc()).all()
 
+
+
     return render_template(
         "sliding-scale.html",
         selected_sentence=selected_sentence,
         emotion1=emotion1,
         emotion2=emotion2,
-        sliding_scale_results=sliding_scale_results
+        results=sliding_scale_results
     )
 
 @app.route("/classify-sliding-scale-result", methods=["POST"])
@@ -218,6 +220,7 @@ def sliding_scale_result():
 
     try:
         # Process the audio for emotions
+        print("Processing audio...")
         result = split_audio_on_word(audio_path, word=shifting_word)
         segment1_emotion = result["Segment 1 Emotion"]["Emotion"]
         segment2_emotion = result["Segment 2 Emotion"]["Emotion"]
@@ -245,7 +248,9 @@ def sliding_scale_result():
 
     except Exception as e:
         print(f"Error: {str(e)}")
+        db.session.rollback()  # Rollback in case of error
         return jsonify({"error": str(e)}), 500
+
 
 @app.route('/predict', methods=['POST'])
 @login_required
