@@ -5,6 +5,8 @@ __pycache__/
 *.sqlite
 static/uploads/
 
+output/
+
 # Ignore Python bytecode
 *.pyc
 __pycache__/
