@@ -1,19 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
-
 {% extends "base.html" %}
-
 {% block content %}
-
-    <!-- Play Section -->
-    <section class="play-section">
-        <!-- Content dynamically updated by the JavaScript logic -->
-    </section>
-
-    <link rel="stylesheet" href="/static/css/styles.css">
-    <script src="/static/js/play-content.js"></script>
-    
-
+<section class="description-section">
+    <header class="minimal-header">
+        <h1>Welcome to the Play section!</h1>
+        <p>Here, you can engage in interactive challenges.</p>
+        <button onclick="location.href='/emotion-game'" class="modern-button">Next</button>
+    </header>
+</section>
 {% endblock %}
-
 </html>

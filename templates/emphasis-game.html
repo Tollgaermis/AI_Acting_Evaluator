@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+{% extends "base.html" %}
+{% block content %}
+<section class="description-section">
+    <header class="minimal-header">
+        <h1>Emphasis Game</h1>
+    </header>
+
+    <div class="exercise-card">
+        <h2 class="header">Emphasize the Word:</h2>
+        <p><strong>Sentence:</strong> {{ sentence }}</p>
+        <p><strong>Target Word:</strong> <span class="highlight">{{ emphasis_word }}</span></p>
+    </div>
+
+    <div class="exercise-card">
+        <h2 class="header">Record Your Voice:</h2>
+        <div class="button-row">
+            <button id="recordButton" class="modern-button">Start Recording</button>
+            <button id="stopButton" class="modern-button" style="display: none;">Stop Recording</button>
+            <audio id="recordedAudio" controls style="display: none;"></audio>
+        </div>
+        <button id="classifyRecording" class="modern-button" style="display: none;">Submit Recording</button>
+    </div>
+
+    <div id="spinner" class="spinner" style="display:none;">
+        <img src="/static/img/loading.gif" alt="Loading...">
+    </div>
+
+   <div id="result" class="modern-result-block">
+    <h2>Results</h2>
+    <p id="resultContent">Your results will appear here.</p>
+    <button id="nextButton" class="modern-button" onclick="location.href='/sliding-scale-game'">Next</button>
+</div>
+
+
+</section>
+<script src="/static/js/emphasis-game.js"></script>
+{% endblock %}
+</html>

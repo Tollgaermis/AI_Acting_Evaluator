@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+{% extends "base.html" %}
+{% block content %}
+
+<section class="description-section">
+    <header class="minimal-header">
+        <h1>Sliding Scale Emotion Analysis</h1>
+    </header>
+
+    <!-- Prompt Section -->
+    <div class="exercise-card">
+        <h2 class="header">Prompt Details</h2>
+        <p class="sentence-red">{{ selected_sentence["sentence1"] }}</p>
+        <p class="sentence-blue">{{ selected_sentence["sentence2"] }}</p>
+        <p><strong>Shifting Word:</strong> "{{ selected_sentence["shifting_word"] }}"</p>
+        <p><strong>Objective:</strong> Act <span class="highlight-red">{{ emotion1 }}</span> in the first part and <span class="highlight-blue">{{ emotion2 }}</span> in the second part.</p>
+    </div>
+
+    <!-- Voice Recording Exercise -->
+    <div class="exercise-card">
+        <h2 class="header">Record Your Voice</h2>
+        <div class="button-row">
+            <button id="recordButton" class="modern-button">Start Recording</button>
+            <button id="stopButton" class="modern-button" style="display: none;">Stop Recording</button>
+            <audio id="recordedAudio" controls style="display: none;" class="modern-audio"></audio>
+        </div>
+        <button id="classifyRecording" class="modern-button" style="display: none;">Classify Recording</button>
+    </div>
+
+    <!-- Fullscreen Loading Spinner -->
+    <div id="spinner" class="spinner" style="display:none;">
+        <img src="/static/img/loading.gif" alt="Loading...">
+    </div>
+
+    <!-- Results Section -->
+    <div id="result" class="modern-result-block">
+        <h2>Classification Results</h2>
+        <p id="resultContent">Your results will appear here after classification.</p>
+    </div>
+
+    <!-- Always Visible Finish Button -->
+    <div id="finish-section" class="modern-result-block">
+        <button class="modern-button" onclick="location.href='/game-results'">Finish</button>
+    </div>
+
+</section>
+
+<script src="/static/js/sliding-scale.js"></script>
+{% endblock %}
+</html>

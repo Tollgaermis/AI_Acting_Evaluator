@@ -116,6 +116,28 @@ def load_sentences(filepath="sentences.txt"):
         print(f"Error: {filepath} not found.")
     return sentence_data
 
+def load_sentences_emotion(filepath="emotion-sentences.txt"):
+    with open(filepath, "r") as file:
+        return [line.strip() for line in file.readlines()]
+
+
+def load_sentences_emphasis(filepath="emphasis-sentences.txt"):
+    """
+    Load sentences with emphasis words from a text file.
+    Each line in the file should be formatted as:
+    Sentence|Emphasis Word
+    """
+    sentences = []
+    try:
+        with open(filepath, "r") as file:
+            for line in file:
+                parts = line.strip().split("|")
+                if len(parts) == 2:  # Ensure valid format
+                    sentences.append({"sentence": parts[0], "emphasis_word": parts[1]})
+    except FileNotFoundError:
+        print(f"Error: {filepath} not found.")
+    return sentences
+
 
 
 # Initialize app with extension
@@ -557,6 +579,277 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for("home"))
+
+@app.route("/emotion-game")
+@login_required
+def emotion_game_page():
+    # Load a random sentence-emotion pair from the file
+    sentence_emotions = load_sentences_emotion("emotion-sentences.txt")
+    if not sentence_emotions:
+        return jsonify({"error": "No sentences available"}), 500
+
+    # Randomly select a sentence and its corresponding target emotion
+    selected_pair = random.choice(sentence_emotions)
+    sentence, target_emotion = selected_pair.split("|")
+
+    # Store the sentence and target emotion in the session for later use
+    session["current_sentence"] = sentence
+    session["target_emotion"] = target_emotion
+
+    # Render the Emotion Game page
+    return render_template("emotion-game.html", sentence=sentence, target_emotion=target_emotion)
+
+
+@app.route("/emotion-game-result", methods=["POST"])
+@login_required
+def emotion_game_result():
+    if "audio" not in request.files:
+        return jsonify({"error": "No audio file uploaded"}), 400
+
+    # Retrieve the target emotion from the session
+    target_emotion = session.get("target_emotion")
+    if not target_emotion:
+        return jsonify({"error": "Target emotion not found in session"}), 500
+
+    # Save the uploaded audio file
+    audio_file = request.files["audio"]
+    audio_filename = secure_filename(f"{current_user.id}_{audio_file.filename}")
+    audio_path = os.path.join("static", "uploads", audio_filename)
+    os.makedirs(os.path.dirname(audio_path), exist_ok=True)
+    audio_file.save(audio_path)
+
+    # Process the uploaded audio file and classify its emotion
+    try:
+        # Call the `predict_emotion` function
+        result = predict_emotion_from_audio(audio_path)
+        predicted_emotion = result["emotion"]
+        predicted_pad = [result["pleasure"], result["arousal"], result["dominance"]]
+
+        # Get PAD values for the target emotion
+        target_pad = emotion_pad_values[target_emotion]
+
+        # Calculate the score based on the predicted and target values
+        score = calculate_score(predicted_pad, target_pad, predicted_emotion, target_emotion)
+        
+        session["emotion_score"] = round(score * 2, 2)
+
+        # Return the result as JSON
+        return jsonify({
+            "sentence": session.get("current_sentence"),
+            "target_emotion": target_emotion,
+            "predicted_emotion": predicted_emotion,
+            "score": round(score*2, 2),
+        })
+
+    except Exception as e:
+        return jsonify({"error": f"Failed to process the audio: {e}"}), 500
+
+
+def predict_emotion_from_audio(audio_path):
+    """
+    Predict the emotion and PAD values from the given audio file.
+    """
+    # Load and preprocess audio file
+    try:
+        audio_input, _ = librosa.load(audio_path, sr=16000)
+    except Exception as e:
+        raise ValueError(f"Failed to load audio: {e}")
+
+    # Prepare input for the model
+    inputs = processor(audio_input, sampling_rate=16000, return_tensors="pt", padding=True)
+    
+    # Some models might not expect 'attention_mask'. Remove it if unnecessary.
+    if "attention_mask" in inputs:
+        inputs.pop("attention_mask")
+
+    inputs = {key: value.to(device) for key, value in inputs.items()}
+
+    # Perform inference
+    try:
+        with torch.no_grad():
+            outputs = model(inputs["input_values"])  # Only pass 'input_values'
+            arousal, dominance, valence = outputs[0].cpu().numpy()
+    except Exception as e:
+        raise ValueError(f"Model inference failed: {e}")
+
+    # Interpret PAD values and classify emotion
+    pleasure = float(valence)
+    arousal = float(arousal)
+    dominance = float(dominance)
+    emotion = classify_emotion([pleasure, arousal, dominance])
+
+    return {
+        "pleasure": pleasure,
+        "arousal": arousal,
+        "dominance": dominance,
+        "emotion": emotion
+    }
+
+@app.route("/emphasis-game")
+@login_required
+def emphasis_game_page():
+    # Load sentences with emphasis words
+    sentences = load_sentences_emphasis("emphasis-sentences.txt")
+    if not sentences:
+        return jsonify({"error": "No sentences available"}), 500
+
+    # Randomly select one sentence
+    selected_sentence = random.choice(sentences)
+    session["selected_sentence"] = selected_sentence
+
+    # Pass only the selected sentence to the template
+    return render_template(
+        "emphasis-game.html", 
+        sentence=selected_sentence["sentence"],
+        emphasis_word=selected_sentence["emphasis_word"]
+    )
+
+@app.route("/emphasis-game-result", methods=["POST"])
+@login_required
+def emphasis_game_result():
+    if "audio" not in request.files:
+        return jsonify({"error": "No audio file uploaded"}), 400
+
+    # Retrieve the selected sentence and emphasis word from the session
+    selected_sentence = session.get("selected_sentence")
+    if not selected_sentence:
+        return jsonify({"error": "No selected sentence found in session"}), 500
+
+    emphasis_word = selected_sentence["emphasis_word"].lower()
+
+    # Save the uploaded audio file
+    audio_file = request.files["audio"]
+    audio_filename = secure_filename(f"{current_user.id}_{audio_file.filename}")
+    audio_path = os.path.join("static", "uploads", audio_filename)
+    os.makedirs(os.path.dirname(audio_path), exist_ok=True)
+    audio_file.save(audio_path)
+
+    # Detect emphasis in the audio file
+    try:
+        # Transcribe audio to get words with timestamps
+        words_with_timestamps = transcribe_audio(audio_path)
+
+        # Detect emphasis using the transcription
+        emphasized_words = detect_emphasis(audio_path, words_with_timestamps, n=1)
+
+        # Normalize case for comparison
+        emphasized_words_lower = [word.lower() for word in emphasized_words]
+
+        # Compare detected emphasis word with the target word
+        if emphasis_word in emphasized_words_lower:
+            score = 100
+        else:
+            score = 0
+
+        session["emphasis_score"] = score
+        
+        # Return result as JSON
+        return jsonify({
+            "score": score,
+            "sentence": selected_sentence["sentence"],
+            "target_word": emphasis_word,
+            "emphasized_words": emphasized_words,
+        })
+    except Exception as e:
+        return jsonify({"error": f"Failed to process the audio: {e}"}), 500
+
+@app.route("/sliding-scale-game")
+@login_required
+def sliding_scale_game():
+    # Load a random sentence and emotions
+    sentences = load_sentences("sentences.txt")
+    if not sentences:
+        return jsonify({"error": "No sentences available"}), 500
+
+    selected_sentence = random.choice(sentences)
+    emotions = list(emotion_pad_values.keys())
+    emotion1, emotion2 = random.sample(emotions, 2)
+
+    # Store the selected sentence and emotions in the session
+    session["selected_sentence"] = selected_sentence
+    session["emotion1"] = emotion1
+    session["emotion2"] = emotion2
+
+    return render_template(
+        "sliding-scale-game.html",
+        selected_sentence=selected_sentence,
+        emotion1=emotion1,
+        emotion2=emotion2,
+    )
+
+@app.route("/sliding-scale-game-result", methods=["POST"])
+@login_required
+def sliding_scale_game_result():
+    if "audio" not in request.files:
+        return jsonify({"error": "No audio file uploaded"}), 400
+
+    selected_sentence = session.get("selected_sentence")
+    emotion1 = session.get("emotion1")
+    emotion2 = session.get("emotion2")
+
+    if not selected_sentence:
+        return jsonify({"error": "Session expired or invalid."}), 500
+
+    shifting_word = ' ' + selected_sentence["shifting_word"].lower()
+    audio_file = request.files["audio"]
+    audio_filename = secure_filename(f"{current_user.id}_{audio_file.filename}")
+    audio_path = os.path.join("static", "uploads", audio_filename)
+    os.makedirs(os.path.dirname(audio_path), exist_ok=True)
+    audio_file.save(audio_path)
+
+    try:
+        result = split_audio_on_word(audio_path, word=shifting_word)
+        segment1_emotion = result["Segment 1 Emotion"]["Emotion"]
+        segment2_emotion = result["Segment 2 Emotion"]["Emotion"]
+
+        target_pad1 = emotion_pad_values[emotion1]
+        target_pad2 = emotion_pad_values[emotion2]
+
+        predicted_pad1 = [
+            result["Segment 1 Emotion"]["Pleasure"],
+            result["Segment 1 Emotion"]["Arousal"],
+            result["Segment 1 Emotion"]["Dominance"],
+        ]
+        predicted_pad2 = [
+            result["Segment 2 Emotion"]["Pleasure"],
+            result["Segment 2 Emotion"]["Arousal"],
+            result["Segment 2 Emotion"]["Dominance"],
+        ]
+
+        segment1_score = calculate_score(predicted_pad1, target_pad1, segment1_emotion, emotion1)
+        segment2_score = calculate_score(predicted_pad2, target_pad2, segment2_emotion, emotion2)
+        overall_score = round(segment1_score + segment2_score, 2)
+
+        # Store score in session
+        session["sliding_game_score"] = overall_score
+
+        return jsonify({
+            "Segment 1 Emotion": segment1_emotion,
+            "Segment 2 Emotion": segment2_emotion,
+            "Overall Score": overall_score,
+        })
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/game-results")
+@login_required
+def game_results_page():
+    # Get scores from the session
+    emotion_score = session.get("emotion_score", 0)
+    emphasis_score = session.get("emphasis_score", 0)
+    sliding_game_score = session.get("sliding_game_score", 0)
+
+    # Calculate the final weighted score
+    final_score = (0.2 * emotion_score) + (0.2 * emphasis_score) + (0.6 * sliding_game_score)
+
+    return render_template(
+        "game-results.html",
+        emotion_score=round(emotion_score, 2),
+        emphasis_score=round(emphasis_score, 2),
+        sliding_game_score=round(sliding_game_score, 2),
+        final_score=round(final_score, 2)
+    )
 
 
 if __name__ == '__main__':
