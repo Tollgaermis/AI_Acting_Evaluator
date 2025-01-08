@@ -33,7 +33,7 @@
     <div class="tabs">
         <ul class="tab-list">
             <li class="tab-item active" onclick="switchTab(event, 'explore')">Explore</li>
-            <li class="tab-item" onclick="switchTab(event, 'play')">Play</li>
+            <li class="tab-item" onclick="window.location.href='/play'">Play</li>
         </ul>
     </div>
 
@@ -41,9 +41,7 @@
     <div id="explore" class="tab-content active">
         <!-- Description Section -->
         <section class="description-section">
-            <p>Welcome to the <strong>AI Voice Acting Evaluator</strong>, your comprehensive platform for enhancing voice acting skills through targeted exercises and real-time feedback.</p>
-            <p>Our application offers a suite of tools designed to refine your vocal performance, emotional expression, and emphasis control. Here's an overview of the key exercises you can explore:</p>
-
+           
             <div class="exercise-card">
                 <h2><a href="/emotion-detection" class="exercise-title-link">Emotion Detection</a></h2>
                 <p>Understanding and conveying emotions authentically is crucial in voice acting. Our Emotion Detection module analyzes your vocal recordings to provide insights into the emotional tones present in your performance. This feedback helps you identify areas for improvement and ensures your delivery resonates with the intended emotional impact.</p>
@@ -64,15 +62,8 @@
         </section>
     </div>
 
-    <!-- Play Tab Content -->
-    <div id="play" class="tab-content">
-        <section class="play-section">
-            <!-- Content dynamically updated by play-content.js -->
-        </section>
-    </div>
     <link rel="stylesheet" href="/static/css/styles.css">
     <script src="/static/js/main-tabs.js"></script>
-    <script src="/static/js/play-content.js"></script>
 
 {% endblock %}
 

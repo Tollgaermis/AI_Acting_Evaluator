@@ -71,13 +71,14 @@ classifyRecordingButton.addEventListener("click", async () => {
                 <p>
                     <strong>Segment 1 (${data["Target Emotion 1"]}):</strong>
                     ${data["Segment 1 Emotion"]} 
-                    (${data["Target Emotion 1"] === data["Segment 1 Emotion"] ? "Success" : "Fail"})
+                    (${data["Segment 1 Score"]} points)
                 </p>
                 <p>
                     <strong>Segment 2 (${data["Target Emotion 2"]}):</strong>
                     ${data["Segment 2 Emotion"]}
-                    (${data["Target Emotion 2"] === data["Segment 2 Emotion"] ? "Success" : "Fail"})
+                    (${data["Segment 2 Score"]} points)
                 </p>
+                <p><strong>Overall Score:</strong> ${data["Overall Score"]} points</p>
                 <p><strong>Full Transcription:</strong> ${data["Transcription"]}</p>
             `;
         } else {

@@ -43,37 +43,48 @@
         </div>
 
         <!-- Past Results Section -->
-        <div id="pastResults" class="past-results-section">
-            <h2>Past Sliding Scale Analyses</h2>
-            <div class="scrollable-table">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Date and Time</th>
-                            <th>Audio</th>
-                            <th>Emotion 1</th>
-                            <th>Emotion 2</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for result in results %}
-                        <tr>
-                            <td>{{ result.created_at }}</td>
-                            <td>
-                                <audio controls>
-                                    <source src="{{ url_for('static', filename='uploads/' + result.user_id | string + '_' + result.audio_file_name) }}" type="audio/wav">
-                                    Your browser does not support the audio element.
-                                </audio>
-                            </td>
-                            <td>{{ result.segment1_emotion }}</td>
-                            <td>{{ result.segment2_emotion }}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </section>
+        <!-- Past Results Section -->
+<div id="pastResults" class="past-results-section">
+    <h2>Past Sliding Scale Analyses</h2>
+    <div class="scrollable-table">
+        <table>
+            <thead>
+                <tr>
+                    <th>Date and Time</th>
+                    <th>Audio</th>
+                    <th>Target Emotion 1</th>
+                    <th>Detected Emotion 1</th>
+                    <th>Segment 1 Score</th>
+                    <th>Target Emotion 2</th>
+                    <th>Detected Emotion 2</th>
+                    <th>Segment 2 Score</th>
+                    <th>Overall Score</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for result in results %}
+                <tr>
+                    <td>{{ result.created_at }}</td>
+                    <td>
+                        <audio controls>
+                            <source src="{{ url_for('static', filename='uploads/' + result.user_id | string + '_' + result.audio_file_name) }}" type="audio/wav">
+                            Your browser does not support the audio element.
+                        </audio>
+                    </td>
+                    <td>{{ result.target_emotion1 }}</td>
+                    <td>{{ result.segment1_emotion }}</td>
+                    <td>{{ result.segment1_score }}</td>
+                    <td>{{ result.target_emotion2 }}</td>
+                    <td>{{ result.segment2_emotion }}</td>
+                    <td>{{ result.segment2_score }}</td>
+                    <td>{{ result.overall_score }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
 
     <script src="/static/js/sliding-scale.js"></script>
 {% endblock %}

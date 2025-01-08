@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+
+{% extends "base.html" %}
+
+{% block content %}
+
+    <!-- Home Page Content -->
+    <div id="home" class="home-content">
+        <!-- Welcome Section -->
+        <section class="welcome-section">
+            <h1>Welcome to the <strong>AI Voice Acting Evaluator</strong>!</h1>
+            <p>Your comprehensive platform for enhancing voice acting skills through targeted exercises and real-time feedback.</p>
+            <p>Discover tools and exercises designed to improve your vocal performance, emotional expression, and emphasis control.</p>
+        </section>
+
+        <!-- Action Buttons Section -->
+        <section class="action-buttons">
+            <a href="{{ url_for('play_mode') }}" class="main-button">Play</a>
+            <a href="{{ url_for('old_main_page') }}" class="main-button">Explore</a>
+        </section>
+
+
+    <link rel="stylesheet" href="/static/css/styles.css">
+
+{% endblock %}
+
+</html>

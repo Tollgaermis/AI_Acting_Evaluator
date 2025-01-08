@@ -117,6 +117,7 @@ def load_sentences(filepath="sentences.txt"):
     return sentence_data
 
 
+
 # Initialize app with extension
 db.init_app(app)
 # Create database within app context
@@ -150,11 +151,38 @@ def convert_to_wav(input_path, output_path):
     except Exception as e:
         raise ValueError(f"Error converting audio to WAV format: {e}")
 
+def calculate_pad_distance(predicted_pad, target_pad):
+    return np.sqrt(sum((predicted_pad[i] - target_pad[i]) ** 2 for i in range(3)))
+
+def calculate_score(predicted_pad, target_pad, predicted_emotion, target_emotion):
+    """
+    Calculate score for one segment based on exact emotion match and PAD closeness.
+    """
+    # Allocate 25 points for exact emotion match
+    exact_match_score = 25 if predicted_emotion == target_emotion else 0
+
+    # Calculate distance for PAD values and normalize to remaining 25 points
+    max_distance = np.sqrt(3 * (6 ** 2))  # Max possible distance in 3D space (-3 to 3 for PAD)
+    distance = np.sqrt(sum((predicted_pad[i] - target_pad[i]) ** 2 for i in range(3)))
+    pad_closeness_score = max(0, 25 * (1 - (distance / max_distance)))
+
+    # Total score
+    return exact_match_score + pad_closeness_score
+
 
 @app.route("/")
 def home():
 	# Render home.html on "/" route
-	return render_template("home.html")
+	return render_template("main.html")
+
+@app.route('/home')
+def old_main_page():
+    return render_template('home.html')
+
+@app.route('/play')
+@login_required
+def play_mode():
+    return render_template('play.html')
 
 @app.route('/emotion-detection')
 @login_required
@@ -197,58 +225,149 @@ def sliding_scale_page():
     )
 
 @app.route("/classify-sliding-scale-result", methods=["POST"])
+
 @login_required
+
 def sliding_scale_result():
+
     if "audio" not in request.files:
+
         return jsonify({"error": "No audio file uploaded"}), 400
 
-    # Retrieve selected sentence and shifting word
+
+
+    # Retrieve session variables
+
     selected_sentence = session.get("selected_sentence")
+
     random_emotion1 = session.get("emotion1")
+
     random_emotion2 = session.get("emotion2")
+
     if not selected_sentence:
+
         return jsonify({"error": "No selected sentence found in session"}), 500
+
+
 
     shifting_word = ' ' + selected_sentence["shifting_word"].lower()
 
+
+
     # Save uploaded audio
+
     audio_file = request.files["audio"]
+
     audio_filename = secure_filename(f"{current_user.id}_{audio_file.filename}")
+
     audio_path = os.path.join("static", "uploads", audio_filename)
+
     os.makedirs(os.path.dirname(audio_path), exist_ok=True)
+
     audio_file.save(audio_path)
 
+
+
     try:
-        # Process the audio for emotions
-        print("Processing audio...")
+
+        # Process audio and retrieve emotions
+
         result = split_audio_on_word(audio_path, word=shifting_word)
+
         segment1_emotion = result["Segment 1 Emotion"]["Emotion"]
+
         segment2_emotion = result["Segment 2 Emotion"]["Emotion"]
+
         transcription = result["Transcription"]
 
+
+
+        # Get PAD values for target and predicted emotions
+
+        target_pad1 = emotion_pad_values[random_emotion1]
+
+        target_pad2 = emotion_pad_values[random_emotion2]
+
+        predicted_pad1 = [
+
+            result["Segment 1 Emotion"]["Pleasure"],
+
+            result["Segment 1 Emotion"]["Arousal"],
+
+            result["Segment 1 Emotion"]["Dominance"],
+
+        ]
+
+        predicted_pad2 = [
+
+            result["Segment 2 Emotion"]["Pleasure"],
+
+            result["Segment 2 Emotion"]["Arousal"],
+
+            result["Segment 2 Emotion"]["Dominance"],
+
+        ]
+
+
+
+        # Calculate scores
+
+        segment1_score = calculate_score(predicted_pad1, target_pad1, segment1_emotion, random_emotion1)
+
+        segment2_score = calculate_score(predicted_pad2, target_pad2, segment2_emotion, random_emotion2)
+
+        overall_score = round(segment1_score + segment2_score, 2)
+
+
+
         # Save result to database
+
         sliding_scale_result = SlidingScaleResult(
+
             user_id=current_user.id,
+
             audio_file_name=audio_filename,
+
             segment1_emotion=segment1_emotion,
+
             segment2_emotion=segment2_emotion,
+
             transcription=transcription
+
         )
+
         db.session.add(sliding_scale_result)
+
         db.session.commit()
 
+
+
         # Return JSON response
+
         return jsonify({
+
             "Segment 1 Emotion": segment1_emotion,
+
             "Segment 2 Emotion": segment2_emotion,
+
             "Target Emotion 1": random_emotion1,
+
             "Target Emotion 2": random_emotion2,
-            "Transcription": transcription
+
+            "Transcription": transcription,
+
+            "Segment 1 Score": round(segment1_score, 2),
+
+            "Segment 2 Score": round(segment2_score, 2),
+
+            "Overall Score": overall_score
+
         })
 
+
+
     except Exception as e:
-        print(f"Error: {str(e)}")
-        db.session.rollback()  # Rollback in case of error
+        db.session.rollback()
         return jsonify({"error": str(e)}), 500
 
 
