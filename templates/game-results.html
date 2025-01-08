@@ -16,5 +16,27 @@
         <hr>
         <h2><strong>Final Score:</strong> {{ final_score }}</h2>
     </div>
+
+    <!-- <tbody id="results-body">
+         Rows populated dynamically via JavaScript
+    </tbody> -->
+    <!-- Add the table element with tbody inside it -->
+    <table>
+        <thead>
+            <tr>
+                <th>username</th>
+                <th>Emotion Score</th>
+                <th>Emphasis Score</th>
+                <th>Sliding Game Score</th>
+                <th>Overall Score</th>
+                <th>Created At</th>
+            </tr>
+        </thead>
+        <tbody id="results-body">
+            <!-- Rows populated dynamically via JavaScript -->
+        </tbody>
+    </table>
+
 </section>
+<script src="/static/js/leaderboard.js"></script>
 {% endblock %}

@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, render_template, url_for, redirect, flash, session
+from flask import Flask, request, g, jsonify, render_template, url_for, redirect, flash, session
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, logout_user, current_user, login_required
@@ -99,20 +99,16 @@ class SlidingScaleResult(db.Model):
     user = db.relationship('Users', backref=db.backref('sliding_scale_results', lazy=True))
 
 
-# class GameResult(db.Model):
-#     id = db.Column(db.Integer, primary_key=True)
-#     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-#     target_emotion1 = db.Column(db.String(100))
-#     segment1_emotion = db.Column(db.String(100))
-#     segment1_score = db.Column(db.Float)
-#     segment2_emotion = db.Column(db.String(100))
-#     target_emotion2 = db.Column(db.String(100))
-#     segment2_score = db.Column(db.Float)
-#     overall_score = db.Column(db.Float)
-#     transcription = db.Column(db.Text)
-#     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
+class GameResult(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    emotion_score = db.Column(db.Float)
+    emphasis_score = db.Column(db.Float)
+    sliding_game_score = db.Column(db.Float)
+    overall_score = db.Column(db.Float)
+    created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
 
-#     user = db.relationship('Users', backref=db.backref('sliding_scale_results', lazy=True))
+    user = db.relationship('Users', backref=db.backref('game_results', lazy=True))
 
 
  
@@ -545,6 +541,7 @@ def login():
             if user.password == request.form.get("password"):
                 # Use the login_user method to log in the user
                 login_user(user)
+                session['user_id'] = user.id
                 return redirect(url_for("home"))
             # Redirect the user back to the home
             else:
@@ -717,7 +714,7 @@ def emphasis_game_result():
 
         # Compare detected emphasis word with the target word
         if emphasis_word in emphasized_words_lower:
-            score = 100
+            score = 60
         else:
             score = 0
 
@@ -828,6 +825,19 @@ def game_results_page():
     # final_score = (0.2 * emotion_score) + (0.2 * emphasis_score) + (0.6 * sliding_game_score)
     final_score =  emotion_score + emphasis_score + sliding_game_score
 
+    # Insert into GameResult table
+    new_game_result = GameResult(
+        user_id=current_user.id, 
+        emotion_score=emotion_score,
+        emphasis_score=emphasis_score,
+        sliding_game_score=sliding_game_score,
+        overall_score=final_score
+    )
+
+    # Add to the database session and commit
+    db.session.add(new_game_result)
+    db.session.commit()
+
     return render_template(
         "game-results.html",
         emotion_score=round(emotion_score, 2),
@@ -835,6 +845,29 @@ def game_results_page():
         sliding_game_score=round(sliding_game_score, 2),
         final_score=round(final_score, 2)
     )
+
+@app.route('/api/game-results', methods=['GET'])
+def get_game_results():
+
+    results = GameResult.query.order_by(GameResult.overall_score.desc()).all()
+
+    results_data = [
+        {
+            "id": result.id,
+            "user_id": result.user_id,
+            "username": result.user.username,
+            "emotion_score": result.emotion_score,
+            "emphasis_score": result.emphasis_score,
+            "sliding_game_score": result.sliding_game_score,
+            "overall_score": result.overall_score,
+            "created_at": result.created_at.strftime('%Y-%m-%d %H:%M:%S')
+        }
+        for result in results
+    ]
+    for result in results:
+        print("AAA")
+    return jsonify(results_data)
+
 
 
 if __name__ == '__main__':

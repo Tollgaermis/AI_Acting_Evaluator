@@ -66,7 +66,7 @@ classifyRecordingButton.addEventListener("click", async () => {
         if (response.ok) {
             const data = await response.json();
             resultContent.innerHTML = `
-                <h3>Score: ${data.score} / 100</h3>
+                <h3>Score: ${data.score} / 60</h3>
                 <p><strong>Sentence:</strong> ${data.sentence}</p>
                 <p><strong>Target Word:</strong> ${data.target_word}</p>
                 <h3>Detected Emphasized Words:</h3>
