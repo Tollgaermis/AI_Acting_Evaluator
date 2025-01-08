@@ -81,3 +81,29 @@ classifyRecordingButton.addEventListener("click", async () => {
         resultDiv.style.display = "block";
     }
 });
+
+
+nextButton.addEventListener('click', async () => {
+    try {
+        // Trigger the POST request to register the game results
+        const response = await fetch("/register-game-results", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+        });
+
+        if (response.ok) {
+            // If the request was successful, redirect to the game results page
+            window.location.href = "/game-results";  // Adjust URL as needed
+        } else {
+            // Handle the error if the request failed
+            const error = await response.json();
+            console.error('Error registering game results:', error);
+            alert('Error registering game results');
+        }
+    } catch (error) {
+        console.error('Unexpected error:', error);
+        alert('Unexpected error occurred');
+    }
+});

@@ -812,14 +812,17 @@ def sliding_scale_game_result():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-
-@app.route("/game-results")
+@app.route("/register-game-results", methods=['POST'])
 @login_required
-def game_results_page():
+def register_game_results():
     # Get scores from the session
     emotion_score = session.get("emotion_score", 0)
     emphasis_score = session.get("emphasis_score", 0)
     sliding_game_score = session.get("sliding_game_score", 0)
+
+    # Ensure that scores exist in the session before proceeding
+    # if not emotion_score or not emphasis_score or not sliding_game_score:
+    #     return jsonify({"error": "Scores not found in session"}), 400
 
     # Calculate the final weighted score
     # final_score = (0.2 * emotion_score) + (0.2 * emphasis_score) + (0.6 * sliding_game_score)
@@ -837,6 +840,33 @@ def game_results_page():
     # Add to the database session and commit
     db.session.add(new_game_result)
     db.session.commit()
+
+    return jsonify({"message": "Game result registered successfully"})
+
+@app.route("/game-results")
+@login_required
+def game_results_page():
+    # Get scores from the session
+    emotion_score = session.get("emotion_score", 0)
+    emphasis_score = session.get("emphasis_score", 0)
+    sliding_game_score = session.get("sliding_game_score", 0)
+
+    # # Calculate the final weighted score
+    # # final_score = (0.2 * emotion_score) + (0.2 * emphasis_score) + (0.6 * sliding_game_score)
+    final_score =  emotion_score + emphasis_score + sliding_game_score
+
+    # # Insert into GameResult table
+    # new_game_result = GameResult(
+    #     user_id=current_user.id, 
+    #     emotion_score=emotion_score,
+    #     emphasis_score=emphasis_score,
+    #     sliding_game_score=sliding_game_score,
+    #     overall_score=final_score
+    # )
+
+    # # Add to the database session and commit
+    # db.session.add(new_game_result)
+    # db.session.commit()
 
     return render_template(
         "game-results.html",
@@ -864,8 +894,6 @@ def get_game_results():
         }
         for result in results
     ]
-    for result in results:
-        print("AAA")
     return jsonify(results_data)
 
 
