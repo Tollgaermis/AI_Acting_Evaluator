@@ -73,10 +73,10 @@
                     </td>
                     <td>{{ result.target_emotion1 }}</td>
                     <td>{{ result.segment1_emotion }}</td>
-                    <td>{{ result.segment1_score }}</td>
+                    <td>{{ result.segment1_score | round(3)}}</td>
                     <td>{{ result.target_emotion2 }}</td>
                     <td>{{ result.segment2_emotion }}</td>
-                    <td>{{ result.segment2_score }}</td>
+                    <td>{{ result.segment2_score | round(3) }}</td>
                     <td>{{ result.overall_score }}</td>
                 </tr>
                 {% endfor %}

@@ -1,6 +1,7 @@
 // Select DOM elements
 const recordButton = document.getElementById("recordButton");
 const stopButton = document.getElementById("stopButton");
+const nextButton = document.getElementById("nextButton");
 const classifyRecordingButton = document.getElementById("classifyRecording");
 const recordedAudio = document.getElementById("recordedAudio");
 const resultDiv = document.getElementById("result");
@@ -9,6 +10,8 @@ const spinner = document.getElementById("spinner");
 
 let mediaRecorder;
 let audioChunks = [];
+
+nextButton.disabled = true;
 
 // Start Recording
 recordButton.addEventListener("click", async () => {
@@ -69,6 +72,7 @@ classifyRecordingButton.addEventListener("click", async () => {
                 <h3>Score: ${data.score} / 100</h3>
             `;
             resultDiv.style.display = "block"; // Show result
+            nextButton.disabled = false;
         } else {
             const error = await response.json();
             alert("Error: " + error.error);
