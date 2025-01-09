@@ -6,6 +6,12 @@
 {% block content %}
 
     <!-- Centered Header -->
+    <div class="tabs">
+        <ul class="tab-list">
+            <li class="tab-item active" onclick="window.location.href='/home'">Explore</li>
+            <li class="tab-item" onclick="window.location.href='/play'">Play</li>
+        </ul>
+    </div>
     
 
     <!-- Forms Section as Exercise Cards -->
@@ -13,13 +19,7 @@
         <header class="minimal-header">
             <h1>Speech Emotion Classification</h1>
         </header>
-        <!-- File Upload Exercise -->
-        <div class="exercise-card">
-            <h2 class="header">Upload an Audio File:</h2>
-            <input type="file" id="audio" name="audio" accept="audio/*" class="form-input">
-            <button type="submit" id="uploadButton" class="modern-button">Upload and Classify</button>
-        </div>
-
+        
         <!-- Voice Recording Exercise -->
         <div class="exercise-card">
             <h2 class="header">Record Your Voice:</h2>
@@ -30,6 +30,13 @@
                 
             </div>
             <button id="classifyRecording" class="modern-button" style="display: none;">Classify Recording</button>
+        </div>
+
+        <!-- File Upload Exercise -->
+        <div class="exercise-card">
+            <h2 class="header">Upload an Audio File:</h2>
+            <input type="file" id="audio" name="audio" accept="audio/*" class="form-input">
+            <button type="submit" id="uploadButton" class="modern-button">Upload and Classify</button>
         </div>
 
     <!-- Fullscreen Loading Spinner -->
@@ -81,5 +88,7 @@
 </section>
 
     <script src="/static/js/scripts.js"></script>
+    <script src="/static/js/main-tabs.js"></script>
+
 {% endblock %}
 </html>

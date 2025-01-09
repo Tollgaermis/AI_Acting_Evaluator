@@ -8,11 +8,13 @@
     <!-- Home Page Content -->
     <div id="home" class="home-content">
         <!-- Welcome Section -->
-        <section class="welcome-section">
-            <h1>Welcome to the <strong>AI Voice Acting Evaluator</strong>!</h1>
-            <p>Your comprehensive platform for enhancing voice acting skills through targeted exercises and real-time feedback.</p>
-            <p>Discover tools and exercises designed to improve your vocal performance, emotional expression, and emphasis control.</p>
-        </section>
+        
+            <h1> <strong>AiCT</strong></h1>
+            
+            <p>Craft Your Voice, Master the Art. </p>
+        
+    </div>
+        
 
         <!-- Action Buttons Section -->
         <section class="action-buttons">
@@ -20,8 +22,29 @@
             <a href="{{ url_for('old_main_page') }}" class="main-button">Explore</a>
         </section>
 
+        <!-- Leaderboard Section -->
+        <section class="leaderboard-section">
+            <h2>Leaderboard</h2>
+            <div class="tableFixHead" style="max-height: 350px;">
+                <table>
+                    <thead>
+                        <th class="fixed">Rank</th>
+                        <th class="fixed">User</th>
+                        <th class="fixed">Emotion Score</th>
+                        <th class="fixed">Emphasis Score</th>
+                        <th class="fixed">Sliding Game Score</th>
+                        <th class="fixed">Overall Score</th>
+                        <th class="fixed">Created At</th>
+                    </thead>
+                    <tbody id="results-body">
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
 
     <link rel="stylesheet" href="/static/css/styles.css">
+    <script src="/static/js/leaderboard.js"></script>
 
 {% endblock %}
 

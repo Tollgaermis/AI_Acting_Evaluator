@@ -5,6 +5,13 @@
 
 {% block content %}
 
+    <div class="tabs">
+        <ul class="tab-list">
+            <li class="tab-item active" onclick="window.location.href='/home'">Explore</li>
+            <li class="tab-item" onclick="window.location.href='/play'">Play</li>
+        </ul>
+    </div>
+
     <!-- Forms Section as Exercise Cards -->
     <section class="description-section">
         <header class="minimal-header">
@@ -87,5 +94,6 @@
 
 
     <script src="/static/js/sliding-scale.js"></script>
+    <script src="/static/js/main-tabs.js"></script>
 {% endblock %}
 </html>

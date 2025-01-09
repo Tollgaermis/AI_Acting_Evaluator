@@ -5,30 +5,38 @@
 
 {% block content %}
 
+    <div class="tabs">
+        <ul class="tab-list">
+            <li class="tab-item active" onclick="window.location.href='/home'">Explore</li>
+            <li class="tab-item" onclick="window.location.href='/play'">Play</li>
+        </ul>
+    </div>
+
     <!-- Forms Section as Exercise Cards -->
     <section class="description-section">
         <header class="minimal-header">
             <h1>Emphasis Detection</h1>
         </header>
         
-        <!-- File Upload Exercise -->
-        <div class="exercise-card">
-            <h2 class="header">Upload an Audio File:</h2>
-            <input type="file" id="audio" name="audio" accept="audio/*" class="form-input">
-            <label for="numWords" class="form-section-title">Number of Emphasized Words:</label>
-            <input type="number" id="numWords" name="numWords" min="1" value="1" class="form-input">
-            <button type="submit" id="uploadButton" class="modern-button">Upload and Detect Emphasis</button>
-        </div>
-
         <!-- Voice Recording Exercise -->
         <div class="exercise-card">
             <h2 class="header">Record Your Voice:</h2>
             <div class="button-row">
+                <label for="numWords" class="form-section-title">Number of Emphasized Words:</label>
+                <input type="number" id="numWords" name="numWords" min="1" value="1" class="form-input">
                 <button id="recordButton" class="modern-button">Start Recording</button>
                 <button id="stopButton" class="modern-button" style="display: none;">Stop Recording</button>
                 <audio id="recordedAudio" controls style="display: none;" class="modern-audio"></audio>
             </div>
             <button id="detectEmphasisRecording" class="modern-button" style="display: none;">Detect Emphasis</button>
+        </div>
+
+
+        <!-- File Upload Exercise -->
+        <div class="exercise-card">
+            <h2 class="header">Upload an Audio File:</h2>
+            <input type="file" id="audio" name="audio" accept="audio/*" class="form-input">
+            <button type="submit" id="uploadButton" class="modern-button">Upload and Detect Emphasis</button>
         </div>
 
         <!-- Fullscreen Loading Spinner -->
@@ -74,5 +82,6 @@
     </section>
 
     <script src="/static/js/emphasis.js"></script>
+    <script src="/static/js/main-tabs.js"></script>
 {% endblock %}
 </html>

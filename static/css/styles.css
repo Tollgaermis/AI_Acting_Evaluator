@@ -31,8 +31,8 @@ html, body {
     margin-bottom: 10px;
 }
 
-.welcome-section p {
-    font-size: 1.2rem;
+para {
+    font-size: 4rem;
     line-height: 1.6;
     color: #555;
     margin-bottom: 15px;
@@ -51,8 +51,9 @@ button:disabled {
 .action-buttons {
     display: flex;
     justify-content: center;
-    gap: 15px;
-    margin-bottom: 40px;
+    gap: 25px;
+    margin-top: 17px;
+    margin-bottom: 10px;
 }
 
 .action-buttons .main-button {
@@ -62,12 +63,12 @@ button:disabled {
     border: none;
     padding: 15px 30px;
     border-radius: 5px;
-    font-size: 16px;
+    font-size: 25px;
     cursor: pointer;
     transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-.action-buttons .modern-button:hover {
+.action-buttons .main-button:hover {
     background-color: #0056b3;
     transform: translateY(-2px);
 }
@@ -127,7 +128,7 @@ button:disabled {
 .minimal-header h1 {
     font-size: 1.8rem;
     font-weight: bold;
-    color:  #da5102;
+    color:  #0756ab;
 }
 
 /* Modern Form Container */
@@ -165,10 +166,10 @@ button:disabled {
 /* H1 styles */
 h1 {
     text-align: center;
-    font-size: 2rem;
+    font-size: 3rem;
     font-weight: bold;
     color: #333;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
 }
 
 .form-container {
@@ -225,7 +226,7 @@ h1 {
 
 .modern-button {
     width: 94%;
-    background-color: #da5102;
+    background-color:#3e9dd4;
     color: #fff;
     border: none;
     padding: 15px 30px;
@@ -237,7 +238,7 @@ h1 {
 }
 
 .modern-button:hover {
-    background-color: #da510267;
+    background-color: #0756ab;
     transform: translateY(-2px);
 }
 
@@ -346,6 +347,49 @@ input[type="file"] {
     color: #333;
 }
 
+.leaderboard-section {
+    margin: 20px auto;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 800px;
+    text-align: left;
+    color: #333;
+}
+
+
+.tableFixHead thead th {
+    position: sticky;
+    background-color: #0756ab; /* New header background color (e.g., coral) */
+    color: #ffffff;
+    font-family: 'Arial', sans-serif;
+    font-size: small;
+    top: 0;                  /* Keep headers at the top */
+    z-index: 1;   
+    
+              /* Ensure headers are above table body */
+}
+
+.tableFixHead          { 
+    overflow: auto; 
+    height: 600px; 
+}
+
+
+/* Styling for the Scrollbar */
+.tableFixHead::-webkit-scrollbar {
+width: 8px;
+}
+
+.tableFixHead::-webkit-scrollbar-thumb {
+background-color: #ffffff;
+border-radius: 10px;
+}
+
+.tableFixHead::-webkit-scrollbar-track {
+background-color: #ffffff;
+}
+
 .description-section h2 {
     font-size: 1.8rem;
     margin-top: 20px;
@@ -358,12 +402,65 @@ input[type="file"] {
     margin-bottom: 20px;
 }
 
+.scrollable-table table {
+    overflow: auto;
+    background-color: #f4f4f9; /* Light gray background for the table */ /* Deep navy blue text color */
+    border-collapse: collapse; /* Ensure borders collapse cleanly */
+    width: 100%; /* Full width */
+    border-radius: 5px; /* Rounded corners */
+}
+
+/* Style the table header (th) */
+.scrollable-table th {
+    background-color: #0756ab; /* Navy blue background */
+    color: #ffffff; /* White text color */
+    font-weight: bold; /* Bold text */
+    text-transform: uppercase; /* Uppercase text */
+    padding: 12px 16px; /* Padding for spacing */
+    text-align: center; /* Center-align text */
+    border: 1px solid #ffffff; /* White border for a clean look */
+}
+
+/* Style the table rows (tr) */
+.scrollable-table tr {
+    background-color: #ffffff; /* White background for rows */
+    transition: background-color 0.3s ease; /* Smooth hover effect */
+}
+
+/* Alternate row colors for better readability */
+.scrollable-table tr:nth-child(even) {
+    background-color: #e3eaf7; /* Light blue for even rows */
+}
+
+/* Hover effect for rows */
+.scrollable-table tr:hover {
+    background-color: #cddaf0; /* Highlighted blue on hover */
+     /* Keep text readable */
+}
+
+/* Style the table data cells (td) */
+.scrollable-table td {
+    padding: 12px 16px; /* Add spacing */
+    text-align: center; /* Center-align text */
+    font-size: 14px; /* Font size */
+    border: 1px solid #ddd; /* Light border */
+    color: #333333; /* Dark gray text */
+}
+
+/* Optional: Add a shadow to the table for a modern look */
+.scrollable-table {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    border-radius: 8px; /* Rounded corners for the table */
+    
+}
+
+
 /* Exercise Card Styles */
 .exercise-card {
     margin: 20px 0;
     padding: 20px;
     background-color: #f9f9f9;
-    border-left: 5px solid #da5102; 
+    border-left: 5px solid #3e9dd4; 
     border-radius: 5px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
@@ -610,7 +707,7 @@ header {
 }
 
 .tabs {
-    margin-bottom: 20px;
+    margin-bottom: 5px;
 }
 .tab-list {
     display: flex;
@@ -677,7 +774,7 @@ header {
 }
 
 .welcome-section p {
-    font-size: 1.2rem;
+    font-size: 4rem;
     color: #555;
     margin-bottom: 1.5rem;
 }
@@ -723,8 +820,7 @@ header {
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   }
 
-.tableFixHead          { overflow: auto; height: 600px; }
-.tableFixHead thead th { position: sticky; top: 0; z-index: 1; }
+
 
 /* Just common table stuff. Really. */
 table  { border-collapse: collapse; width: 100%; border-radius: 5px; }
@@ -783,19 +879,7 @@ tbody tr {
     }
     }
 
-/* Styling for the Scrollbar */
-.tableFixHead::-webkit-scrollbar {
-    width: 8px;
-  }
-  
-  .tableFixHead::-webkit-scrollbar-thumb {
-    background-color: #ffffff;
-    border-radius: 10px;
-  }
-  
-  .tableFixHead::-webkit-scrollbar-track {
-    background-color: #ffffff;
-  }
+ 
 
 /* Responsive layout for mobile */
 @media (max-width: 768px) {
