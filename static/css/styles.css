@@ -247,7 +247,7 @@ h1 {
 }
 
 .modern-audio {
-    width: 100%;
+    width: 70%;
     margin-top: 20px;
     margin-bottom: 10px;
     border: none;
@@ -369,14 +369,14 @@ input[type="file"] {
     font-family: 'Arial', sans-serif;
     font-size: small;
     top: 0;                  /* Keep headers at the top */
-    z-index: 1;   
-    
-              /* Ensure headers are above table body */
+    z-index: 1;
 }
 
 .tableFixHead          { 
     overflow: auto; 
-    height: 600px; 
+    height: 600px;
+    border-radius: 10px;
+    border: none;
 }
 
 
@@ -405,59 +405,6 @@ background-color: #ffffff;
     line-height: 1.6;
     margin-bottom: 20px;
 }
-
-.scrollable-table table {
-    overflow: auto;
-    background-color: #f4f4f9; /* Light gray background for the table */ /* Deep navy blue text color */
-    border-collapse: collapse; /* Ensure borders collapse cleanly */
-    width: 100%; /* Full width */
-    border-radius: 5px; /* Rounded corners */
-}
-
-/* Style the table header (th) */
-.scrollable-table th {
-    background-color: #0756ab; /* Navy blue background */
-    color: #ffffff; /* White text color */
-    font-weight: bold; /* Bold text */
-    text-transform: uppercase; /* Uppercase text */
-    padding: 12px 16px; /* Padding for spacing */
-    text-align: center; /* Center-align text */
-    border: 1px solid #ffffff; /* White border for a clean look */
-}
-
-/* Style the table rows (tr) */
-.scrollable-table tr {
-    background-color: #ffffff; /* White background for rows */
-    transition: background-color 0.3s ease; /* Smooth hover effect */
-}
-
-/* Alternate row colors for better readability */
-.scrollable-table tr:nth-child(even) {
-    background-color: #e3eaf7; /* Light blue for even rows */
-}
-
-/* Hover effect for rows */
-.scrollable-table tr:hover {
-    background-color: #cddaf0; /* Highlighted blue on hover */
-     /* Keep text readable */
-}
-
-/* Style the table data cells (td) */
-.scrollable-table td {
-    padding: 12px 16px; /* Add spacing */
-    text-align: center; /* Center-align text */
-    font-size: 14px; /* Font size */
-    border: 1px solid #ddd; /* Light border */
-    color: #333333; /* Dark gray text */
-}
-
-/* Optional: Add a shadow to the table for a modern look */
-.scrollable-table {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-    border-radius: 8px; /* Rounded corners for the table */
-    
-}
-
 
 /* Exercise Card Styles */
 .exercise-card {
