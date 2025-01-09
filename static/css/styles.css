@@ -121,6 +121,10 @@ button:disabled {
 }
 
 .minimal-header {
+    display: flex;        /* Use flexbox for layout */
+    flex-direction: column; /* Align elements vertically */
+    align-items: center;  /* Optional: Center items horizontally */
+    gap: 10px;            /* Add space between elements */
     text-align: center;
     background-color: transparent;
 }
@@ -343,7 +347,7 @@ input[type="file"] {
     border-radius: 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     width: 800px;
-    text-align: left;
+    text-align: center;
     color: #333;
 }
 
