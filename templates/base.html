@@ -34,11 +34,11 @@
     <div id="content">{% block content %}{% endblock %}</div>
     <footer>
         {% if current_user.is_authenticated %}
-        <p>You are logged in. <a href="/logout">Logout</a></p>
+        <p>You are logged in. <a href="/logout">Logout  </a>  &copy; 2025 AI Voice Acting Evaluator. All rights reserved. </p>
         {% else %}
-        <p>You are not logged in. <a href="{{ url_for('login') }}">Login</a> or <a href="{{ url_for('register') }}">Sign Up</a>.</p>
+        <p>You are not logged in. <a href="{{ url_for('login') }}">Login</a> or <a href="{{ url_for('register') }}">Sign Up  </a> &copy; 2025 AI Voice Acting Evaluator. All rights reserved.</p>
         {% endif %}
-         <!-- <p>&copy; 2024 AI Voice Acting Evaluator. All rights reserved.</p> -->
+         
     </footer>
     
     <script src="/static/js/toast.js"></script>

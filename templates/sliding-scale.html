@@ -72,7 +72,7 @@
                 {% if results %}
                     {% for result in results %}
                     <tr>
-                        <td>{{ result.created_at }}</td>
+                        <td><span class="date-cell">{{ result.created_at }}</span></td>
                         <td>
                             <audio controls>
                                 <source src="{{ url_for('static', filename='uploads/' + result.user_id | string + '_' + result.audio_file_name) }}" type="audio/wav">
@@ -98,8 +98,10 @@
     </div>
 </div>
 
-
+    <script src="/static/js/date.js"></script>
+    <link rel="stylesheet" href="/static/css/styles.css">
     <script src="/static/js/sliding-scale.js"></script>
     <script src="/static/js/main-tabs.js"></script>
+    
 {% endblock %}
 </html>
