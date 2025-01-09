@@ -896,6 +896,26 @@ def get_game_results():
     ]
     return jsonify(results_data)
 
+@app.route('/leaderboard', methods=['GET'])
+def get_leaderboard():
+
+    results = GameResult.query.order_by(GameResult.overall_score.desc()).all()
+
+    results_data = [
+        {
+            "id": result.id,
+            "user_id": result.user_id,
+            "username": result.user.username,
+            "emotion_score": result.emotion_score,
+            "emphasis_score": result.emphasis_score,
+            "sliding_game_score": result.sliding_game_score,
+            "overall_score": result.overall_score,
+            "created_at": result.created_at.strftime('%Y-%m-%d %H:%M:%S')
+        }
+        for result in results
+    ]
+    return render_template('leaderboard.html', results=results)
+
 
 
 if __name__ == '__main__':
